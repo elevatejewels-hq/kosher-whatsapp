@@ -322,7 +322,15 @@
         font-size: 11px; color: var(--text-2);
         user-select: none;
       }
-      .bubble img.photo { display: block; max-width: 300px; width: 100%; border-radius: 6px; margin-bottom: 4px; }
+      .bubble img.photo { display: block; max-width: 300px; width: 100%; max-height: 320px; object-fit: cover; border-radius: 6px; margin-bottom: 4px; cursor: pointer; background: rgba(0, 0, 0, 0.04); }
+      .photo-note {
+        display: flex; align-items: center; gap: 8px;
+        min-width: 200px; max-width: 280px;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 6px; padding: 12px; margin-bottom: 4px;
+        font-size: 13.5px; line-height: 1.4; color: var(--text-2);
+      }
+      @media (prefers-color-scheme: dark) { .photo-note { background: rgba(255, 255, 255, 0.08); } }
       .file-card {
         display: flex; align-items: center; gap: 10px;
         background: rgba(0, 0, 0, 0.05);
@@ -995,6 +1003,14 @@
       .head-btn.light { color: #fff; }
       .status-text { flex: 1; display: grid; place-items: center; text-align: center; font-size: 27px; line-height: 1.4; padding: 30px; font-weight: 600; overflow-wrap: anywhere; }
       .status-foot { text-align: center; font-size: 12.5px; color: rgba(255,255,255,0.8); padding: 0 20px 26px; }
+      /* ---------- Full-screen photo viewer ---------- */
+      .media-view { position: fixed; inset: 0; z-index: 120; background: #0b141a; display: flex; flex-direction: column; }
+      .media-view[hidden] { display: none !important; }
+      .media-head { display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #fff; flex: none; }
+      .media-head .media-who { display: block; font-size: 16.5px; line-height: 1.25; }
+      .media-head .media-when { display: block; font-size: 12.5px; color: rgba(255,255,255,0.7); line-height: 1.25; }
+      .media-stage { flex: 1; min-height: 0; display: grid; place-items: center; padding: 8px; }
+      .media-stage img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
       .modal-veil { position: fixed; inset: 0; background: rgba(11,20,26,0.55); display: none; place-items: center; z-index: 118; padding: 20px; }
       .modal-veil.on { display: grid; }
       .modal-card { background: var(--panel-2); color: var(--text); border-radius: 14px; max-width: 400px; width: 100%; padding: 20px 22px; box-shadow: 0 12px 30px rgba(0,0,0,0.35); max-height: calc(100dvh - 40px); overflow-y: auto; }
@@ -1728,6 +1744,17 @@
       <div class="status-foot">Seen only inside this chat</div>
     </div>
 
+    <!-- ============ Full-screen photo viewer ============ -->
+    <div class="media-view" id="mediaView" hidden role="dialog" aria-modal="true" aria-label="Photo viewer">
+      <div class="media-head">
+        <button class="head-btn light" id="mediaClose" aria-label="Back to chat">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <span style="min-width:0;"><span class="media-who" id="mediaWho">You</span><small class="media-when" id="mediaWhen"></small></span>
+      </div>
+      <div class="media-stage" id="mediaStage"><img id="mediaImg" alt="Photo, full screen" /></div>
+    </div>
+
     <!-- ============ Status editor ============ -->
     <div class="modal-veil" id="statusEditor">
       <div class="modal-card">
@@ -1794,7 +1821,7 @@
       </div>
     </div>
 
-    <input type="file" id="photoInput" accept="image/*,video/*" hidden />
+    <input type="file" id="photoInput" accept="image/*,video/*" multiple hidden />
     <input type="file" id="docInput" hidden />
     <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden />
     <input type="file" id="audioInput" accept="audio/*" hidden />
@@ -1863,6 +1890,34 @@
           return Math.floor(sec / 60) + ":" + (sec % 60 < 10 ? "0" : "") + (sec % 60);
         }
 
+        /* Shown in place of a picture when a picked image is in a format
+           this browser cannot render — never a broken-image icon. */
+        function photoNoteEl() {
+          var note = document.createElement("div");
+          note.className = "photo-note";
+          note.textContent = "Photo couldn't be displayed — this image format isn't supported by the browser.";
+          return note;
+        }
+
+        /* ---- Full-screen photo viewer ---- */
+        var mediaView = document.getElementById("mediaView");
+        var mediaImg = document.getElementById("mediaImg");
+        function openMediaViewer(src, who, whenText) {
+          mediaImg.src = src;
+          document.getElementById("mediaWho").textContent = who === "out" ? "You" : "Muse";
+          document.getElementById("mediaWhen").textContent = whenText;
+          mediaView.hidden = false;
+        }
+        function closeMediaViewer() {
+          mediaView.hidden = true;
+          mediaImg.removeAttribute("src");
+        }
+        document.getElementById("mediaClose").addEventListener("click", closeMediaViewer);
+        document.getElementById("mediaStage").addEventListener("click", function (e) { if (e.target === this) closeMediaViewer(); });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && !mediaView.hidden) closeMediaViewer();
+        });
+
         function addMessage(opts) {
           var row = document.createElement("div");
           row.className = "msg-row " + opts.who + (lastWho !== opts.who ? " group-start" : "");
@@ -1886,10 +1941,25 @@
           if (opts.imageURL) {
             var img = document.createElement("img");
             img.className = "photo";
-            img.src = opts.imageURL;
             img.alt = opts.alt || "Photo shared in chat";
+            var imgFailed = false;
+            var failPhoto = function () {
+              if (imgFailed) return;
+              imgFailed = true;
+              if (img.parentNode) img.parentNode.replaceChild(photoNoteEl(), img);
+            };
+            img.addEventListener("error", failPhoto);
+            img.addEventListener("load", function () { if (!img.naturalWidth) failPhoto(); });
+            img.addEventListener("click", function () {
+              /* A long-press just opened the message menu — don't also open the viewer. */
+              var menu = document.getElementById("msgMenu");
+              if (menu && !menu.hidden) return;
+              openMediaViewer(img.src, opts.who, fmtTime(opts.time || new Date()));
+            });
+            img.src = opts.imageURL;
             bubble.appendChild(img);
           }
+          if (opts.imageFailed) bubble.appendChild(photoNoteEl());
           if (opts.videoURL) {
             var vid = document.createElement("video");
             vid.className = "photo";
@@ -2017,7 +2087,7 @@
           lastWho = opts.who;
           scrollDown();
 
-          var preview = opts.text || (opts.imageURL ? "📷 Photo" : opts.videoURL ? "🎥 Video" : opts.audioURL ? "🎤 Voice message" : opts.file ? "📄 " + opts.file.name : "");
+          var preview = opts.text || ((opts.imageURL || opts.imageFailed) ? "📷 Photo" : opts.videoURL ? "🎥 Video" : opts.audioURL ? "🎤 Voice message" : opts.file ? "📄 " + opts.file.name : "");
           updateList(preview, opts.time || new Date(), opts.who === "out" ? (opts.state || "sent") : null, false);
           return bubble;
         }
@@ -2231,14 +2301,43 @@
           if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
           return (bytes / (1024 * 1024)).toFixed(1) + " MB";
         }
+        /* Read a picked image fully in-browser (FileReader → data URL) so the
+           picture renders right in the chat. Calls back with null when the
+           file cannot be read at all. */
+        function readImageFile(f, done) {
+          var reader = new FileReader();
+          reader.onload = function () { done(reader.result); };
+          reader.onerror = function () { done(null); };
+          try { reader.readAsDataURL(f); } catch (e) { done(null); }
+        }
         photoInput.addEventListener("change", function () {
-          var f = photoInput.files && photoInput.files[0];
-          if (!f) return;
-          var url = URL.createObjectURL(f);
-          if (f.type.indexOf("video") === 0) addMessage({ who: "out", videoURL: url, time: new Date(), state: "delivered" });
-          else addMessage({ who: "out", imageURL: url, alt: f.name, time: new Date(), state: "delivered" });
-          scheduleReply("📷 Photo");
+          var files = photoInput.files ? Array.prototype.slice.call(photoInput.files) : [];
           photoInput.value = "";
+          if (!files.length) return;
+          /* Post every picked file as its own message, in the order picked:
+             images go through one at a time so a multi-pick keeps its order. */
+          var idx = 0, sentPhoto = false, sentVideo = false;
+          function next() {
+            if (idx >= files.length) {
+              if (sentPhoto) scheduleReply("📷 Photo");
+              else if (sentVideo) scheduleReply("🎥 Video");
+              return;
+            }
+            var f = files[idx++];
+            if (f.type.indexOf("video") === 0) {
+              addMessage({ who: "out", videoURL: URL.createObjectURL(f), time: new Date(), state: "delivered" });
+              sentVideo = true;
+              next();
+            } else {
+              readImageFile(f, function (dataUrl) {
+                if (dataUrl) addMessage({ who: "out", imageURL: dataUrl, alt: f.name, time: new Date(), state: "delivered" });
+                else addMessage({ who: "out", imageFailed: true, alt: f.name, time: new Date(), state: "delivered" });
+                sentPhoto = true;
+                next();
+              });
+            }
+          }
+          next();
         });
         docInput.addEventListener("change", function () {
           var f = docInput.files && docInput.files[0];
@@ -3212,7 +3311,7 @@
           if (b.querySelector(".vnote")) return "🎤 Voice message";
           if (b.querySelector(".poll")) return "📊 Poll";
           if (b.querySelector(".contact-card")) return "Contact: Muse";
-          if (b.querySelector("img.photo")) return "📷 Photo";
+          if (b.querySelector("img.photo") || b.querySelector(".photo-note")) return "📷 Photo";
           if (b.querySelector("video")) return "🎥 Video";
           if (b.querySelector(".file-card")) return "📄 Document";
           return "Message";
@@ -3469,11 +3568,30 @@
         });
         $("attachPoll").addEventListener("click", function () { closeAttach(); $("pollModal").classList.add("on"); setTimeout(function () { $("pollQ").focus(); }, 60); });
         $("cameraInput").addEventListener("change", function () {
-          var f = this.files && this.files[0];
-          if (!f) return;
-          WA.addMessage({ who: "out", imageURL: URL.createObjectURL(f), alt: f.name, time: new Date(), state: "delivered" });
-          WA.scheduleReply("📷 Photo");
+          var files = this.files ? Array.prototype.slice.call(this.files) : [];
           this.value = "";
+          if (!files.length) return;
+          /* Read the shot fully in-browser (FileReader → data URL) so it
+             renders right in the chat, like the Photos & videos path. */
+          var idx = 0;
+          function next() {
+            if (idx >= files.length) { WA.scheduleReply("📷 Photo"); return; }
+            var f = files[idx++];
+            var reader = new FileReader();
+            reader.onload = function () {
+              WA.addMessage({ who: "out", imageURL: reader.result, alt: f.name, time: new Date(), state: "delivered" });
+              next();
+            };
+            reader.onerror = function () {
+              WA.addMessage({ who: "out", imageFailed: true, alt: f.name, time: new Date(), state: "delivered" });
+              next();
+            };
+            try { reader.readAsDataURL(f); } catch (e) {
+              WA.addMessage({ who: "out", imageFailed: true, alt: f.name, time: new Date(), state: "delivered" });
+              next();
+            }
+          }
+          next();
         });
         $("audioInput").addEventListener("change", function () {
           var f = this.files && this.files[0];
