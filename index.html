@@ -216,7 +216,7 @@
       .side-foot svg { color: var(--text-2); }
       .fab {
         position: absolute;
-        right: 18px; bottom: calc(78px + env(safe-area-inset-bottom));
+        right: 18px; bottom: calc(88px + env(safe-area-inset-bottom));
         width: 56px; height: 56px; border-radius: 16px;
         background: var(--green);
         display: grid; place-items: center;
@@ -397,6 +397,29 @@
       .rec-hint { flex: 1; color: var(--text-2); font-size: 14px; text-align: right; }
       .rec-act { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; flex: none; }
       .rec-act.send { background: var(--green); color: #fff; }
+
+      /* Dictation bar: the mic reads words into text — it never records a voice note */
+      .dict-bar {
+        display: none;
+        align-items: center; gap: 12px;
+        background: var(--panel);
+        padding: 2px 16px calc(10px + env(safe-area-inset-bottom));
+      }
+      .dict-bar.on { display: flex; }
+      .dict-text {
+        flex: 1; min-width: 0;
+        color: var(--text-2); font-size: 14px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .mic-btn.listening {
+        background: #ea0038;
+        animation: micPulse 1.2s ease-in-out infinite;
+      }
+      @keyframes micPulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(234, 0, 56, 0.45); }
+        50% { box-shadow: 0 0 0 8px rgba(234, 0, 56, 0); }
+      }
+      @media (prefers-reduced-motion: reduce) { .mic-btn.listening { animation: none; } }
 
       .popover {
         position: absolute;
@@ -805,6 +828,194 @@
         .head-btn, .comp-btn, .send-btn, .mic-btn, .fab, .chip, .btn-primary, .btn-ghost { transition: none; }
         .head-btn:active, .comp-btn:active, .send-btn:active, .mic-btn:active, .fab:active { transform: none; }
       }
+
+      /* ---------- Tabs, Updates, Communities, Calls ---------- */
+      .side-views { flex: 1; display: flex; min-height: 0; }
+      .side-view { flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--panel-2); }
+      .side-view.scroll { display: block; overflow-y: auto; }
+      .tabbar { display: flex; background: var(--panel-2); border-top: 1px solid var(--border); padding: 4px 2px calc(4px + env(safe-area-inset-bottom)); flex: none; position: relative; z-index: 6; }
+      .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 3px 0 2px; font-size: 12px; color: var(--text-2); position: relative; }
+      .tab .tab-ic { display: grid; place-items: center; width: 58px; height: 30px; border-radius: 16px; color: var(--icon); }
+      .tab.active { color: var(--text); font-weight: 600; }
+      .tab.active .tab-ic { background: var(--chip-bg); color: var(--teal); }
+      @media (prefers-color-scheme: dark) { .tab.active .tab-ic { color: #00a884; } }
+      .tab-badge { position: absolute; top: 1px; left: calc(50% + 5px); background: var(--unread); color: #fff; font-size: 11px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 9px; display: grid; place-items: center; padding: 0 5px; }
+      .view-title { font-size: 20px; font-weight: 600; padding: 16px 20px 2px; }
+      .view-sub { font-size: 14.5px; font-weight: 600; padding: 14px 20px 4px; }
+      .view-note { padding: 14px 20px; font-size: 13px; line-height: 1.55; color: var(--text-2); }
+      .status-row { display: flex; gap: 13px; align-items: center; width: 100%; padding: 9px 16px; text-align: left; }
+      .status-row:hover { background: var(--hover); }
+      .ring-wrap { position: relative; flex: none; display: grid; }
+      .ring { display: grid; place-items: center; border-radius: 50%; padding: 2.5px; background: var(--green); }
+      .ring.off { background: transparent; padding: 0; }
+      .ring .avatar { border: 2px solid var(--panel-2); width: 46px; height: 46px; }
+      .ring.off .avatar { border: 0; }
+      .plus-badge { position: absolute; right: -2px; bottom: -2px; width: 21px; height: 21px; border-radius: 50%; background: var(--green); color: #fff; display: grid; place-items: center; border: 2px solid var(--panel-2); }
+      .status-meta { min-width: 0; }
+      .status-name { display: block; font-size: 16.5px; }
+      .status-sub { display: block; font-size: 13.5px; color: var(--text-2); margin-top: 1px; }
+      .round-ic { width: 44px; height: 44px; border-radius: 50%; background: var(--green); color: #fff; display: grid; place-items: center; flex: none; }
+      .comm-new { display: flex; align-items: center; gap: 13px; width: 100%; padding: 10px 16px; text-align: left; font-size: 16px; }
+      .comm-new:hover { background: var(--hover); }
+      .comm-new small { display: block; font-size: 13px; color: var(--text-2); font-weight: 400; margin-top: 1px; }
+      .comm-ic { width: 44px; height: 44px; border-radius: 12px; background: var(--green); color: #fff; display: grid; place-items: center; flex: none; }
+      .comm-card { margin: 12px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+      .comm-head { display: flex; gap: 12px; align-items: center; padding: 12px 14px; }
+      .comm-head h3 { margin: 0; font-size: 16px; }
+      .comm-head p { margin: 1px 0 0; font-size: 13px; color: var(--text-2); }
+      .comm-row { display: flex; gap: 12px; align-items: center; width: 100%; padding: 10px 14px; text-align: left; border-top: 1px solid var(--border); font-size: 15.5px; }
+      .comm-row:hover { background: var(--hover); }
+      .comm-row small { display: block; font-size: 12.5px; color: var(--text-2); }
+      .comm-row .avatar { width: 40px; height: 40px; }
+      .avatar.sq { border-radius: 11px; }
+      .call-row { display: flex; gap: 13px; align-items: center; width: 100%; padding: 9px 16px; text-align: left; }
+      .call-row:hover { background: var(--hover); }
+      .call-row .avatar { width: 46px; height: 46px; font-size: 19px; }
+      .call-meta { flex: 1; min-width: 0; }
+      .call-name { display: block; font-size: 16.5px; }
+      .call-dir { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--text-2); margin-top: 1px; }
+      .call-go { color: var(--teal); display: grid; place-items: center; width: 40px; height: 40px; flex: none; }
+      @media (prefers-color-scheme: dark) { .call-go { color: #00a884; } }
+      .archived-row { display: flex; align-items: center; gap: 19px; width: 100%; padding: 13px 19px; text-align: left; font-size: 16px; }
+      .archived-row:hover { background: var(--hover); }
+      .archived-row .arch-ic { color: var(--teal); display: grid; place-items: center; }
+      .arch-count { margin-left: auto; font-size: 13px; color: var(--teal); font-weight: 600; }
+      .archived-back { display: flex; align-items: center; gap: 14px; width: 100%; padding: 12px 16px; text-align: left; font-size: 16px; font-weight: 600; }
+      .arch-mode .chips, .arch-mode .ai-launch, .arch-mode .hub, .arch-mode .side-foot, .arch-mode #listEmpty { display: none !important; }
+      .arch-mode #chatList > #chatItem { display: none !important; }
+      .chat-ic { color: var(--text-3); display: grid; place-items: center; flex: none; }
+
+      /* ---------- Menus, reply, reactions, polls, voice notes ---------- */
+      .menu-pop { position: fixed; z-index: 130; background: var(--panel-2); border-radius: 10px; box-shadow: 0 8px 28px rgba(0,0,0,0.3); padding: 6px 0; min-width: 214px; }
+      .menu-pop button { display: flex; width: 100%; padding: 10px 18px; font-size: 14.5px; text-align: left; color: var(--text); }
+      .menu-pop button:hover { background: var(--hover); }
+      .msg-menu { position: fixed; z-index: 131; background: var(--panel-2); border-radius: 14px; box-shadow: 0 10px 32px rgba(0,0,0,0.32); padding: 4px 0 6px; min-width: 208px; }
+      .msg-menu .rxn-row { display: flex; gap: 1px; padding: 7px 9px; border-bottom: 1px solid var(--border); }
+      .msg-menu .rxn-row button { font-size: 21px; width: 37px; height: 37px; border-radius: 50%; display: grid; place-items: center; line-height: 1; }
+      .msg-menu .rxn-row button:hover { background: var(--hover); }
+      .msg-menu .mi { display: flex; width: 100%; padding: 9px 16px; font-size: 14.5px; text-align: left; color: var(--text); }
+      .msg-menu .mi:hover { background: var(--hover); }
+      .msg-menu .mi.danger { color: #ea0038; }
+      .reply-bar { display: flex; align-items: center; gap: 8px; background: var(--panel); padding: 8px 10px 0; }
+      .reply-inner { flex: 1; min-width: 0; background: var(--search-bg); border-radius: 8px; padding: 7px 11px; box-shadow: inset 3.5px 0 0 var(--teal); }
+      .reply-inner .qname { color: var(--teal); font-weight: 600; font-size: 13px; }
+      .reply-inner .qtext { font-size: 13.5px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .bubble .quote { background: rgba(0,0,0,0.06); border-radius: 6px; padding: 5px 8px; margin-bottom: 4px; box-shadow: inset 3.5px 0 0 var(--teal); }
+      @media (prefers-color-scheme: dark) { .bubble .quote { background: rgba(255,255,255,0.09); } }
+      .bubble .quote .qname { color: var(--teal); font-weight: 600; font-size: 12.5px; }
+      @media (prefers-color-scheme: dark) { .bubble .quote .qname { color: #00a884; } }
+      .bubble .quote .qtext { color: var(--text-2); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px; }
+      .fwd-label { display: flex; gap: 4px; align-items: center; color: var(--text-2); font-style: italic; font-size: 12.5px; margin-bottom: 2px; }
+      .reaction-badge { position: absolute; bottom: -11px; right: 6px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 11px; padding: 0 6px; font-size: 12.5px; line-height: 1.5; box-shadow: 0 1px 2px var(--shadow); z-index: 2; }
+      .msg-row.has-reaction { margin-bottom: 13px; }
+      .star-ic { display: inline-grid; place-items: center; }
+      .bubble.flash { animation: flashBg 1.8s ease; }
+      @keyframes flashBg { 0%, 55% { background-color: #ffe98a; } 100% { background-color: rgba(255, 233, 138, 0); } }
+      .vnote { display: flex; align-items: center; gap: 8px; min-width: 215px; padding-right: 2px; }
+      .vn-play { width: 38px; height: 38px; border-radius: 50%; background: var(--teal); color: #fff; display: grid; place-items: center; flex: none; }
+      .bubble.in .vn-play { background: #8696a0; }
+      .vn-bars { display: flex; align-items: center; gap: 2px; flex: 1; height: 30px; }
+      .vn-bars i { width: 3px; border-radius: 2px; background: var(--text-3); opacity: 0.5; flex: none; }
+      .vn-bars i.played { background: var(--teal); opacity: 1; }
+      .vn-dur { font-size: 11.5px; color: var(--text-2); min-width: 30px; font-variant-numeric: tabular-nums; }
+      .poll { min-width: 225px; }
+      .poll-q { font-weight: 600; font-size: 14.5px; margin-bottom: 4px; }
+      .poll-opt { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; padding: 8px 6px 10px; border-radius: 8px; position: relative; font-size: 14px; color: var(--text); }
+      .poll-opt:hover { background: rgba(0,0,0,0.05); }
+      .poll-opt .ring-o { width: 19px; height: 19px; border-radius: 50%; border: 2px solid var(--text-3); flex: none; display: grid; place-items: center; color: #fff; }
+      .poll-opt.voted .ring-o { background: var(--teal); border-color: var(--teal); }
+      .poll-opt .bar { position: absolute; left: 34px; right: 6px; bottom: 3px; height: 4px; border-radius: 2px; background: rgba(0,0,0,0.09); }
+      .poll-opt .bar i { display: block; height: 100%; background: var(--teal); border-radius: 2px; width: 0; transition: width 0.4s ease; }
+      .poll-opt .pct { margin-left: auto; font-size: 12px; color: var(--text-2); flex: none; }
+      .poll-foot { font-size: 12px; color: var(--text-2); margin-top: 4px; }
+      .contact-card { display: flex; align-items: center; gap: 11px; min-width: 225px; padding-bottom: 7px; }
+      .contact-card .avatar { width: 44px; height: 44px; font-size: 18px; }
+      .contact-actions { display: block; width: calc(100% + 17px); margin: 0 -8.5px -6px; padding: 8px; text-align: center; color: var(--teal); font-weight: 600; font-size: 14.5px; border-top: 1px solid rgba(0,0,0,0.09); }
+      .rec-wave { display: flex; gap: 2.5px; align-items: center; height: 22px; flex: none; }
+      .rec-wave i { width: 3px; border-radius: 2px; background: var(--text-3); animation: recWave 0.8s ease-in-out infinite; }
+      .rec-wave i:nth-child(3n) { height: 16px; animation-delay: 0.15s; }
+      .rec-wave i:nth-child(3n+1) { height: 9px; }
+      .rec-wave i:nth-child(3n+2) { height: 20px; animation-delay: 0.3s; }
+      @keyframes recWave { 0%, 100% { transform: scaleY(0.6); } 50% { transform: scaleY(1.15); } }
+
+      /* ---------- Settings & starred screens ---------- */
+      .screen { position: fixed; inset: 0; z-index: 85; background: var(--panel-2); color: var(--text); display: flex; flex-direction: column; }
+      .screen[hidden] { display: none !important; }
+      #starredScreen { z-index: 88; }
+      .screen-head { display: flex; align-items: center; gap: 12px; background: var(--panel); padding: 9px 10px; min-height: 59px; font-size: 17.5px; flex: none; }
+      .screen-body { flex: 1; overflow-y: auto; }
+      .set-profile { display: flex; gap: 16px; padding: 20px; align-items: flex-start; }
+      .set-profile .avatar { width: 64px; height: 64px; }
+      .set-fields { flex: 1; min-width: 0; }
+      .set-fields label { display: block; font-size: 12.5px; font-weight: 600; color: var(--teal); margin-bottom: 10px; }
+      .set-fields input { display: block; width: 100%; margin-top: 3px; padding: 8px 2px; font: inherit; font-size: 16px; font-weight: 400; color: var(--text); border: 0; border-bottom: 1.5px solid var(--border-strong); background: transparent; outline: none; }
+      .set-fields input:focus { border-color: var(--teal); }
+      .set-hint { padding: 0 20px 6px; font-size: 12.5px; color: var(--text-2); margin: 0; }
+      .set-group { border-top: 1px solid var(--border); margin-top: 12px; padding: 6px 0; }
+      .set-row { display: flex; align-items: center; gap: 17px; width: 100%; padding: 12px 20px; text-align: left; font-size: 15.5px; color: var(--text); }
+      .set-row:hover { background: var(--hover); }
+      .set-row small { display: block; color: var(--text-2); font-size: 13px; margin-top: 1px; }
+      .set-row .switch { margin-left: auto; }
+      .set-row.danger { color: #ea0038; }
+      .set-row.danger svg { color: #ea0038; }
+      .wp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 4px 20px 12px; }
+      @media (max-width: 480px) { .wp-grid { grid-template-columns: repeat(3, 1fr); } }
+      .wp-swatch { height: 62px; border-radius: 10px; border: 2px solid var(--border); font-size: 12px; color: var(--text-2); display: grid; place-items: end center; padding-bottom: 5px; }
+      .wp-swatch.sel { border-color: var(--teal); color: var(--teal); font-weight: 600; }
+      .star-item { display: flex; flex-direction: column; gap: 2px; width: 100%; text-align: left; padding: 13px 20px; border-bottom: 1px solid var(--border); color: var(--text); }
+      .star-item:hover { background: var(--hover); }
+      .star-who { font-size: 13px; font-weight: 600; color: var(--teal); }
+      .star-txt { font-size: 15px; line-height: 1.4; }
+      .star-time { font-size: 12px; color: var(--text-2); }
+
+      /* ---------- Call screen ---------- */
+      .call-screen { position: fixed; inset: 0; z-index: 110; background: linear-gradient(180deg, #075e54, #0b141a 72%); color: #fff; display: flex; flex-direction: column; align-items: center; padding: 24px 20px calc(30px + env(safe-area-inset-bottom)); }
+      .call-screen[hidden] { display: none !important; }
+      .call-enc { display: flex; gap: 6px; align-items: center; font-size: 13px; color: #cfd8dc; }
+      .call-peer { margin-top: 8vh; text-align: center; position: relative; }
+      .call-peer .avatar { width: 112px; height: 112px; font-size: 47px; margin: 0 auto 14px; }
+      .call-peer .avatar.pulse { animation: callPulse 1.6s ease-out infinite; }
+      @keyframes callPulse { 0% { box-shadow: 0 0 0 0 rgba(37,211,102,0.45); } 70% { box-shadow: 0 0 0 30px rgba(37,211,102,0); } 100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); } }
+      .call-name { font-size: 27px; }
+      .call-status { font-size: 15.5px; color: #cfd8dc; margin-top: 4px; font-variant-numeric: tabular-nums; }
+      .call-self { position: absolute; right: 16px; top: 84px; width: 92px; height: 126px; border-radius: 12px; background: #26353d; display: grid; place-items: center; color: #8696a0; border: 1px solid rgba(255,255,255,0.16); }
+      .call-actions { margin-top: auto; display: flex; gap: 15px; align-items: flex-start; }
+      .call-act { display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 11.5px; color: #e9edef; }
+      .call-act .cb { width: 54px; height: 54px; border-radius: 50%; background: rgba(255,255,255,0.14); display: grid; place-items: center; color: #fff; }
+      .call-act .cb.on { background: #ffffff; color: #111b21; }
+      .call-act .cb.end { background: #ea0038; width: 62px; height: 62px; }
+
+      /* ---------- Status viewer & small modals ---------- */
+      .status-view { position: fixed; inset: 0; z-index: 115; display: flex; flex-direction: column; color: #fff; }
+      .status-view[hidden] { display: none !important; }
+      .status-progress { height: 3px; background: rgba(255,255,255,0.35); margin: 12px 12px 0; border-radius: 2px; overflow: hidden; flex: none; }
+      .status-progress i { display: block; height: 100%; width: 0; background: #fff; }
+      .status-head { display: flex; align-items: center; gap: 11px; padding: 12px 14px; }
+      .status-head .avatar { width: 40px; height: 40px; }
+      .head-btn.light { color: #fff; }
+      .status-text { flex: 1; display: grid; place-items: center; text-align: center; font-size: 27px; line-height: 1.4; padding: 30px; font-weight: 600; overflow-wrap: anywhere; }
+      .status-foot { text-align: center; font-size: 12.5px; color: rgba(255,255,255,0.8); padding: 0 20px 26px; }
+      .modal-veil { position: fixed; inset: 0; background: rgba(11,20,26,0.55); display: none; place-items: center; z-index: 118; padding: 20px; }
+      .modal-veil.on { display: grid; }
+      .modal-card { background: var(--panel-2); color: var(--text); border-radius: 14px; max-width: 400px; width: 100%; padding: 20px 22px; box-shadow: 0 12px 30px rgba(0,0,0,0.35); max-height: calc(100dvh - 40px); overflow-y: auto; }
+      .modal-card h3 { margin: 0 0 12px; font-size: 17.5px; }
+      .modal-card label { display: block; font-size: 13px; font-weight: 600; color: var(--text-2); margin: 11px 0 4px; }
+      .modal-card input[type="text"] { width: 100%; padding: 10px 11px; font: inherit; font-size: 15.5px; border: 1px solid var(--border-strong); border-radius: 9px; background: var(--input-bg); color: var(--text); outline: none; }
+      .modal-card input[type="text"]:focus { border-color: var(--teal); }
+      .modal-textarea { width: 100%; padding: 11px; font: inherit; font-size: 16px; border: 1px solid var(--border-strong); border-radius: 9px; background: var(--input-bg); color: var(--text); outline: none; resize: vertical; }
+      .modal-textarea:focus { border-color: var(--teal); }
+      .swatches { display: flex; gap: 10px; margin: 13px 0 4px; }
+      .swatch { width: 38px; height: 38px; border-radius: 50%; border: 3px solid transparent; flex: none; }
+      .swatch.sel { border-color: var(--text); }
+      .info-text { font-size: 15px; line-height: 1.5; background: var(--search-bg); border-radius: 9px; padding: 10px 12px; margin: 0 0 6px; overflow-wrap: anywhere; }
+      .info-line { display: flex; justify-content: space-between; gap: 14px; padding: 10px 0; border-top: 1px solid var(--border); font-size: 14.5px; }
+      .info-line span:first-child { color: var(--text-2); }
+      @media (prefers-reduced-motion: reduce) {
+        .call-peer .avatar.pulse { animation: none; }
+        .rec-wave i { animation: none; }
+        .bubble.flash { animation: none; }
+        .poll-opt .bar i { transition: none; }
+      }
     </style>
   </head>
   <body>
@@ -812,11 +1023,11 @@
       <!-- ============ Sidebar ============ -->
       <aside class="sidebar" aria-label="Chat list">
         <header class="side-head">
-          <div class="avatar me" aria-hidden="true">
+          <div class="avatar me" id="meAvatar" role="button" tabindex="0" aria-label="Profile and settings" title="Profile & settings" style="cursor:pointer;">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="#ffffff"><circle cx="12" cy="8" r="4.2"/><path d="M12 13.4c-4.6 0-8 2.5-8 5.6 0 .6.4 1 1 1h14c.6 0 1-.4 1-1 0-3.1-3.4-5.6-8-5.6z"/></svg>
           </div>
           <div class="spacer"></div>
-          <button class="head-btn" aria-label="Status" title="Status">
+          <button class="head-btn" id="statusBtn" aria-label="Status" title="Status">
             <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="8.5" stroke-dasharray="4.5 3.4"/><circle cx="12" cy="12" r="3.4" fill="currentColor" stroke="none"/></svg>
           </button>
           <button class="head-btn" id="newChatBtn" aria-label="New chat" title="New chat">
@@ -831,11 +1042,13 @@
           <button class="head-btn sound-btn" id="soundToggleBtn" aria-label="Chat sounds on or off" title="Chat sounds: on" aria-pressed="true">
             <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3z"/><g class="sound-waves" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a8.5 8.5 0 0 1 0 12"/></g><path class="sound-off-line" d="M16 9l6 6M22 9l-6 6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" fill="none"/></svg>
           </button>
-          <button class="head-btn" aria-label="Menu" title="Menu">
+          <button class="head-btn" id="sideMenuBtn" aria-label="Menu" title="Menu">
             <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="12" cy="19" r="1.9"/></svg>
           </button>
         </header>
 
+        <div class="side-views">
+        <section class="side-view" id="viewChats" aria-label="Chats">
         <div class="search-wrap">
           <div class="search">
             <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
@@ -846,6 +1059,8 @@
         <div class="chips" role="group" aria-label="Chat filters">
           <button class="chip active" data-filter="all">All</button>
           <button class="chip" data-filter="unread">Unread</button>
+          <button class="chip" data-filter="favourites">Favourites</button>
+          <button class="chip" data-filter="groups">Groups</button>
         </div>
 
         <button class="ai-launch" id="aiLaunchBtn" aria-label="Open Kosher AI Search — private browser window">
@@ -854,6 +1069,19 @@
         </button>
 
         <div class="chat-list" id="chatList">
+          <button class="archived-row" id="archivedRow">
+            <span class="arch-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.54 5.23l-1.39-1.68A1.99 1.99 0 0 0 17.61 2.82H6.39c-.61 0-1.19.29-1.54.79L3.46 5.23A1 1 0 0 0 3 6v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a1 1 0 0 0-.46-.77zM12 18a3 3 0 1 1 0-6 3 3 0 0 1 0 6zM19 9H5V6h14v3z"/></svg></span>
+            Archived
+            <span class="arch-count" id="archCount" hidden></span>
+          </button>
+          <div id="archivedPanel" hidden>
+            <button class="archived-back" id="archivedBack">
+              <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+              Archived chats
+            </button>
+            <div id="archivedList"></div>
+            <p class="list-empty" id="archivedEmpty">No archived chats.<br />Long-press the chat with Muse and tap Archive to keep it here.</p>
+          </div>
           <button class="chat-item" id="chatItem">
             <span class="avatar muse">M</span>
             <span class="chat-meta">
@@ -865,6 +1093,8 @@
                 <span id="listTicks"></span>
                 <span class="chat-preview" id="listPreview"></span>
                 <span class="unread-badge" id="unreadBadge" hidden></span>
+                <span class="chat-ic" id="muteIcon" hidden><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22a2.5 2.5 0 0 0 2.5-2.5h-5A2.5 2.5 0 0 0 12 22zm7-6v-5c0-3.07-1.63-5.64-4.5-6.32V4a2.5 2.5 0 1 0-5 0v.68C6.64 5.36 5 7.92 5 11v5l-2 2v1h18v-1l-2-2z" opacity="0.45"/><path d="M3.27 2L2 3.27 20.73 22 22 20.73z"/></svg></span>
+                <span class="chat-ic" id="pinIcon" hidden><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 3a1 1 0 0 1 .71.29l4 4A1 1 0 0 1 20.41 9H15v5.59l2.29 2.3a1 1 0 0 1-1.42 1.41L13 15.41V22a1 1 0 0 1-2 0v-6.59l-2.87 2.89a1 1 0 0 1-1.42-1.41L9 14.59V9H3.59a1 1 0 0 1-.7-1.71l4-4A1 1 0 0 1 7.59 3H16z" transform="rotate(45 12 12)"/></svg></span>
               </span>
             </span>
           </button>
@@ -909,9 +1139,123 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 8V6a3 3 0 1 1 6 0v3H9z"/></svg>
           <span>Kosher WhatsApp · Just you and Muse — no one else</span>
         </div>
+        </section>
+
+        <section class="side-view scroll" id="viewUpdates" hidden aria-label="Updates">
+          <div class="view-title">Updates</div>
+          <div class="view-sub">Status</div>
+          <button class="status-row" id="myStatusRow">
+            <span class="ring-wrap">
+              <span class="ring off" id="myStatusRing"><span class="avatar me"><svg width="24" height="24" viewBox="0 0 24 24" fill="#ffffff"><circle cx="12" cy="8" r="4.2"/><path d="M12 13.4c-4.6 0-8 2.5-8 5.6 0 .6.4 1 1 1h14c.6 0 1-.4 1-1 0-3.1-3.4-5.6-8-5.6z"/></svg></span></span>
+              <span class="plus-badge" id="myStatusPlus"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></span>
+            </span>
+            <span class="status-meta">
+              <span class="status-name">My status</span>
+              <span class="status-sub" id="myStatusSub">Tap to add status update</span>
+            </span>
+          </button>
+          <div class="view-sub">Recent updates</div>
+          <button class="status-row" id="museStatusRow">
+            <span class="ring-wrap">
+              <span class="ring"><span class="avatar muse">M</span></span>
+            </span>
+            <span class="status-meta">
+              <span class="status-name">Muse</span>
+              <span class="status-sub" id="museStatusTime">Today</span>
+            </span>
+          </button>
+          <p class="view-note">Status here is seen only inside this chat — just you and Muse, like everything else in this space. Updates disappear after 24 hours.</p>
+        </section>
+
+        <section class="side-view scroll" id="viewCommunities" hidden aria-label="Communities">
+          <div class="view-title">Communities</div>
+          <button class="comm-new" id="newCommunityBtn">
+            <span class="comm-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.48.11.7A4.5 4.5 0 0 1 16 11zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05A4.22 4.22 0 0 1 17 16.5V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></span>
+            New community
+          </button>
+          <article class="comm-card">
+            <div class="comm-head">
+              <span class="comm-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.48.11.7A4.5 4.5 0 0 1 16 11zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05A4.22 4.22 0 0 1 17 16.5V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></span>
+              <div><h3>Our projects</h3><p>Everything we're building together, in one place</p></div>
+            </div>
+            <button class="comm-row" id="commAnnounce">
+              <span class="avatar sq" style="background:#25d366;"><svg width="20" height="20" viewBox="0 0 24 24" fill="#075e54"><path d="M18 11v2h4v-2h-4zm-2 6.61c.96.71 2.21 1.65 3.2 2.39.4-.53.8-1.07 1.2-1.6-.99-.74-2.24-1.68-3.2-2.39-.54.54-.8 1.07-1.2 1.6zM3 5v14a1 1 0 0 0 1 1h1V6H4a1 1 0 0 0-1-1zm16-1.5v-.5H8a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1z" transform="scale(0.92) translate(1 1)"/></svg></span>
+              <span>Announcements<small>New previews and updates land in the chat</small></span>
+            </button>
+            <button class="comm-row" id="commVip">
+              <span class="avatar sq" style="background:#8a6d2f;">V</span>
+              <span>VIP Events<small>Website, previews &amp; bookings</small></span>
+            </button>
+            <button class="comm-row" id="commChat">
+              <span class="avatar sq muse">M</span>
+              <span>Kosher WhatsApp<small>This chat — just you and Muse</small></span>
+            </button>
+          </article>
+          <p class="view-note">Communities gather related chats under one roof. Here, they gather your project chats with Muse.</p>
+        </section>
+
+        <section class="side-view scroll" id="viewCalls" hidden aria-label="Calls">
+          <div class="view-title">Calls</div>
+          <button class="comm-new" id="callLinkBtn">
+            <span class="round-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3.9 12a3.1 3.1 0 0 1 3.1-3.1h4V7H7a5 5 0 0 0 0 10h4v-1.9H7A3.1 3.1 0 0 1 3.9 12zM8 13h8v-2H8v2zm9-6h-4v1.9h4a3.1 3.1 0 0 1 0 6.2h-4V17h4a5 5 0 0 0 0-10z"/></svg></span>
+            <span>Create call link<small>Share a link so others can join a call</small></span>
+          </button>
+          <div class="view-sub">Recent</div>
+          <div id="callLog">
+            <button class="call-row" data-call-mode="video">
+              <span class="avatar muse">M</span>
+              <span class="call-meta">
+                <span class="call-name">Muse</span>
+                <span class="call-dir"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#25a244" stroke-width="2.4" stroke-linecap="round"><path d="M7 17L17 7M9 7h8v8"/></svg><span>Today, 9:41 AM</span></span>
+              </span>
+              <span class="call-go"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/></svg></span>
+            </button>
+            <button class="call-row" data-call-mode="voice">
+              <span class="avatar muse">M</span>
+              <span class="call-meta">
+                <span class="call-name">Muse</span>
+                <span class="call-dir"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#25a244" stroke-width="2.4" stroke-linecap="round"><path d="M17 7L7 17M15 17H7V9"/></svg><span>Yesterday, 6:15 PM</span></span>
+              </span>
+              <span class="call-go"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.4 11.4 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.57 1 1 0 0 1-.25 1.02l-2.2 2.2z"/></svg></span>
+            </button>
+            <button class="call-row" data-call-mode="voice">
+              <span class="avatar muse">M</span>
+              <span class="call-meta">
+                <span class="call-name">Muse</span>
+                <span class="call-dir"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ea0038" stroke-width="2.4" stroke-linecap="round"><path d="M17 7L7 17M15 17H7V9"/></svg><span style="color:#ea0038;">Yesterday, 2:03 PM · Missed</span></span>
+              </span>
+              <span class="call-go"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.4 11.4 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.57 1 1 0 0 1-.25 1.02l-2.2 2.2z"/></svg></span>
+            </button>
+          </div>
+          <p class="view-note">Tap a call in the list to ring Muse again. Talking itself happens in the chat — that's where the two of you actually meet.</p>
+        </section>
+        </div>
+
+        <nav class="tabbar" aria-label="Sections">
+          <button class="tab active" data-tab="chats">
+            <span class="tab-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg></span>
+            Chats
+            <span class="tab-badge" id="tabBadge" hidden></span>
+          </button>
+          <button class="tab" data-tab="updates">
+            <span class="tab-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="8.5" stroke-dasharray="4.5 3.4"/><circle cx="12" cy="12" r="3.4" fill="currentColor" stroke="none"/></svg></span>
+            Updates
+          </button>
+          <button class="tab" data-tab="communities">
+            <span class="tab-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.48.11.7A4.5 4.5 0 0 1 16 11zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05A4.22 4.22 0 0 1 17 16.5V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></span>
+            Communities
+          </button>
+          <button class="tab" data-tab="calls">
+            <span class="tab-ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.4 11.4 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.57 1 1 0 0 1-.25 1.02l-2.2 2.2z"/></svg></span>
+            Calls
+          </button>
+        </nav>
 
         <button class="fab" id="fabBtn" aria-label="Open chat with Muse">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg>
+        </button>
+        <button class="fab" id="callsFab" hidden aria-label="Start a voice call with Muse">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.4 11.4 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.57 1 1 0 0 1-.25 1.02l-2.2 2.2z"/></svg>
         </button>
       </aside>
 
@@ -930,17 +1274,17 @@
               </span>
             </span>
           </button>
-          <button class="head-btn hide-sm" aria-label="Video call" title="Video call" data-soon>
+          <button class="head-btn hide-sm" id="headVideoBtn" aria-label="Video call" title="Video call">
             <svg class="icon" width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/></svg>
           </button>
-          <button class="head-btn hide-sm" aria-label="Voice call" title="Voice call" data-soon>
+          <button class="head-btn hide-sm" id="headVoiceBtn" aria-label="Voice call" title="Voice call">
             <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.4 11.4 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.57 1 1 0 0 1-.25 1.02l-2.2 2.2z"/></svg>
           </button>
           <span class="head-sep"></span>
-          <button class="head-btn" aria-label="Search in conversation" title="Search" data-soon>
+          <button class="head-btn" id="headSearchBtn" aria-label="Search in conversation" title="Search">
             <svg class="icon" width="23" height="23" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
           </button>
-          <button class="head-btn" aria-label="Menu" title="Menu" data-soon>
+          <button class="head-btn" id="chatMenuBtn" aria-label="Menu" title="Menu">
             <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="12" cy="19" r="1.9"/></svg>
           </button>
         </header>
@@ -968,10 +1312,50 @@
               </span>
               Document
             </button>
+            <button id="attachCamera">
+              <span class="attach-ic" style="background:#e91e63;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM9 2L7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3.17L15 2H9zm3 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/></svg>
+              </span>
+              Camera
+            </button>
+            <button id="attachAudio">
+              <span class="attach-ic" style="background:#f0732f;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+              </span>
+              Audio
+            </button>
+            <button id="attachLocation">
+              <span class="attach-ic" style="background:#1faa55;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+              </span>
+              Location
+            </button>
+            <button id="attachContact">
+              <span class="attach-ic" style="background:#009de2;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-3.34 0-10 1.67-10 5v3h20v-3c0-3.33-6.66-5-10-5z"/></svg>
+              </span>
+              Contact
+            </button>
+            <button id="attachPoll">
+              <span class="attach-ic" style="background:#eda33c;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M5 9h3v10H5zM10.5 3h3v16h-3zM16 13h3v6h-3z" transform="translate(0.5 1)"/></svg>
+              </span>
+              Poll
+            </button>
           </div>
 
           <div class="popover emoji-panel" id="emojiPanel">
             <div class="emoji-grid" id="emojiGrid"></div>
+          </div>
+
+          <div class="reply-bar" id="replyBar" hidden>
+            <div class="reply-inner">
+              <div class="qname" id="replyName"></div>
+              <div class="qtext" id="replyText"></div>
+            </div>
+            <button class="comp-btn" id="replyCancel" aria-label="Cancel reply">
+              <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
           </div>
 
           <footer class="composer" id="composerBar">
@@ -984,7 +1368,7 @@
             <div class="input-pill">
               <textarea id="composer" rows="1" placeholder="Type a message" aria-label="Type a message"></textarea>
             </div>
-            <button class="mic-btn" id="micBtn" aria-label="Voice message">
+            <button class="mic-btn" id="micBtn" aria-label="Dictate message" title="Dictate — your words become text">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
             </button>
             <button class="send-btn" id="sendBtn" aria-label="Send message" hidden>
@@ -992,14 +1376,10 @@
             </button>
           </footer>
 
-          <div class="rec-bar" id="recBar">
-            <button class="rec-act" id="recCancel" aria-label="Delete recording" style="color:#ea0038;">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5a1 1 0 0 0 0 2h14a1 1 0 0 0 0-2z"/></svg>
-            </button>
+          <div class="dict-bar" id="dictBar">
             <span class="rec-dot"></span>
-            <span class="rec-time" id="recTime">0:00</span>
-            <span class="rec-hint">Recording…</span>
-            <button class="rec-act send" id="recSend" aria-label="Send voice message">
+            <span class="dict-text" id="dictText">Listening… speak — your words appear as text</span>
+            <button class="rec-act send" id="dictDone" aria-label="Stop dictation">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
             </button>
           </div>
@@ -1220,6 +1600,188 @@
       </div>
     </div>
 
+    <!-- ============ Settings ============ -->
+    <div class="screen" id="settingsScreen" hidden role="dialog" aria-modal="true" aria-label="Settings">
+      <header class="screen-head">
+        <button class="head-btn" id="setBack" aria-label="Back">
+          <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        Settings
+      </header>
+      <div class="screen-body">
+        <div class="set-profile">
+          <div class="avatar me"><svg width="34" height="34" viewBox="0 0 24 24" fill="#ffffff"><circle cx="12" cy="8" r="4.2"/><path d="M12 13.4c-4.6 0-8 2.5-8 5.6 0 .6.4 1 1 1h14c.6 0 1-.4 1-1 0-3.1-3.4-5.6-8-5.6z"/></svg></div>
+          <div class="set-fields">
+            <label>Display name<input type="text" id="setName" value="You" autocomplete="off" /></label>
+            <label>About<input type="text" id="setAbout" value="Hey there! I am using Kosher WhatsApp." autocomplete="off" /></label>
+          </div>
+        </div>
+        <p class="set-hint">Your name and about show only inside this page — this chat is just you and Muse.</p>
+        <div class="set-group">
+          <button class="set-row" id="setStarred">
+            <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg>
+            <span>Starred messages<small>Everything you've starred in the chat</small></span>
+          </button>
+          <button class="set-row" id="setArchived">
+            <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.54 5.23l-1.39-1.68A1.99 1.99 0 0 0 17.61 2.82H6.39c-.61 0-1.19.29-1.54.79L3.46 5.23A1 1 0 0 0 3 6v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a1 1 0 0 0-.46-.77zM12 18a3 3 0 1 1 0-6 3 3 0 0 1 0 6zM19 9H5V6h14v3z"/></svg>
+            <span>Archived chats<small id="setArchSub">None archived</small></span>
+          </button>
+        </div>
+        <div class="set-group">
+          <div class="set-row" style="cursor:default;">
+            <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+            <span>Chat wallpaper<small>Pick a background for this chat</small></span>
+          </div>
+          <div class="wp-grid" id="wpGrid">
+            <button class="wp-swatch sel" data-wp="default" style="background:#efeae2;">Default</button>
+            <button class="wp-swatch" data-wp="mint" style="background:#dcefe2;">Mint</button>
+            <button class="wp-swatch" data-wp="rose" style="background:#f6e3e0;">Rose</button>
+            <button class="wp-swatch" data-wp="sky" style="background:#dde9f5;">Sky</button>
+            <button class="wp-swatch" data-wp="sand" style="background:#f1e8d5;">Sand</button>
+            <button class="wp-swatch" data-wp="lilac" style="background:#e7e2f2;">Lilac</button>
+            <button class="wp-swatch" data-wp="night" style="background:#0b141a;color:#8696a0;">Night</button>
+            <button class="wp-swatch" data-wp="plain" style="background:#ffffff;">Plain</button>
+          </div>
+        </div>
+        <div class="set-group">
+          <button class="set-row" id="setSounds">
+            <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>
+            <span>Chat sounds<small>Button taps, send and reply sounds</small></span>
+            <span class="switch" id="setSoundSwitch" role="switch" aria-checked="true" aria-label="Chat sounds"></span>
+          </button>
+          <button class="set-row" id="setNotify">
+            <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22a2.5 2.5 0 0 0 2.5-2.5h-5A2.5 2.5 0 0 0 12 22zm7-6v-5c0-3.07-1.63-5.64-4.5-6.32V4a2.5 2.5 0 1 0-5 0v.68C6.64 5.36 5 7.92 5 11v5l-2 2v1h18v-1l-2-2z"/></svg>
+            <span>Message notifications<small>For new replies in this chat</small></span>
+            <span class="switch" id="setNotifySwitch" role="switch" aria-checked="true" aria-label="Message notifications"></span>
+          </button>
+          <button class="set-row" id="setPrivacy">
+            <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 8V6a3 3 0 1 1 6 0v3H9z"/></svg>
+            <span>Privacy<small>Just you and Muse — nothing is shared with anyone</small></span>
+          </button>
+          <button class="set-row" id="setStorage">
+            <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C7.58 3 4 4.79 4 7s3.58 4 8 4 8-1.79 8-4-3.58-4-8-4zM4 9v3c0 2.21 3.58 4 8 4s8-1.79 8-4V9c0 2.21-3.58 4-8 4s-8-1.79-8-4zm0 5v3c0 2.21 3.58 4 8 4s8-1.79 8-4v-3c0 2.21-3.58 4-8 4s-8-1.79-8-4z"/></svg>
+            <span>Storage and data<small>This conversation lives on this page only</small></span>
+          </button>
+          <button class="set-row" id="setHelp">
+            <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 17h-2v-2h2zm2.07-7.75l-.9.92A3.4 3.4 0 0 0 13 15h-2v-.5a3.42 3.42 0 0 1 1.17-2.83l1.24-1.26A1.5 1.5 0 1 0 10 9H8a3.5 3.5 0 1 1 7.07 1.25z"/></svg>
+            <span>Help<small>About this chat</small></span>
+          </button>
+          <button class="set-row danger" id="setLock">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 8V6a3 3 0 1 1 6 0v3H9z"/></svg>
+            <span>Lock app<small>Back to the PIN screen</small></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Starred messages ============ -->
+    <div class="screen" id="starredScreen" hidden role="dialog" aria-modal="true" aria-label="Starred messages">
+      <header class="screen-head">
+        <button class="head-btn" id="starredBack" aria-label="Back">
+          <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        Starred messages
+      </header>
+      <div class="screen-body">
+        <div id="starredList"></div>
+        <p class="list-empty" id="starredEmpty">No starred messages yet.<br />Press and hold a message — or right-click it — then tap Star.</p>
+      </div>
+    </div>
+
+    <!-- ============ Call screen ============ -->
+    <div class="call-screen" id="callScreen" hidden role="dialog" aria-modal="true" aria-label="Call with Muse">
+      <div class="call-enc">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 8V6a3 3 0 1 1 6 0v3H9z"/></svg>
+        End-to-end encrypted
+      </div>
+      <div class="call-peer">
+        <div class="avatar muse" id="callAvatar">M</div>
+        <div class="call-name">Muse</div>
+        <div class="call-status" id="callStatus">Calling…</div>
+      </div>
+      <div class="call-self" id="callSelf" hidden>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4.2"/><path d="M12 13.4c-4.6 0-8 2.5-8 5.6 0 .6.4 1 1 1h14c.6 0 1-.4 1-1 0-3.1-3.4-5.6-8-5.6z"/></svg>
+      </div>
+      <div class="call-actions">
+        <span class="call-act"><button class="cb" id="callSpeaker" aria-label="Speaker"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg></button>Speaker</span>
+        <span class="call-act"><button class="cb" id="callVideoTgl" aria-label="Video on or off"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/></svg></button>Video</span>
+        <span class="call-act"><button class="cb" id="callMute" aria-label="Mute"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg></button>Mute</span>
+        <span class="call-act"><button class="cb" id="callMsg" aria-label="Message instead"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg></button>Message</span>
+        <span class="call-act"><button class="cb end" id="callEnd" aria-label="End call"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="transform: rotate(135deg);"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.4 11.4 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.57 1 1 0 0 1-.25 1.02l-2.2 2.2z"/></svg></button>End</span>
+      </div>
+    </div>
+
+    <!-- ============ Status viewer ============ -->
+    <div class="status-view" id="statusView" hidden role="dialog" aria-modal="true" aria-label="Status">
+      <div class="status-progress"><i id="statusProg"></i></div>
+      <div class="status-head">
+        <button class="head-btn light" id="statusClose" aria-label="Close status">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <span class="avatar muse" id="statusAvatar">M</span>
+        <span style="min-width:0;"><span id="statusWho" style="display:block;font-size:16.5px;">Muse</span><small id="statusWhen" style="display:block;color:rgba(255,255,255,0.75);font-size:12.5px;"></small></span>
+        <button class="head-btn light" id="statusDelete" hidden aria-label="Delete my status" style="margin-left:auto;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5a1 1 0 0 0 0 2h14a1 1 0 0 0 0-2z"/></svg>
+        </button>
+      </div>
+      <div class="status-text" id="statusText"></div>
+      <div class="status-foot">Seen only inside this chat</div>
+    </div>
+
+    <!-- ============ Status editor ============ -->
+    <div class="modal-veil" id="statusEditor">
+      <div class="modal-card">
+        <h3>New status</h3>
+        <textarea class="modal-textarea" id="statusInput" rows="3" maxlength="120" placeholder="Type a status update"></textarea>
+        <div class="swatches" id="statusSwatches">
+          <button class="swatch sel" data-color="#008069" style="background:#008069;" aria-label="Teal"></button>
+          <button class="swatch" data-color="#38618c" style="background:#38618c;" aria-label="Blue"></button>
+          <button class="swatch" data-color="#b0526b" style="background:#b0526b;" aria-label="Rose"></button>
+          <button class="swatch" data-color="#3f7d4e" style="background:#3f7d4e;" aria-label="Green"></button>
+          <button class="swatch" data-color="#8a6d3b" style="background:#8a6d3b;" aria-label="Bronze"></button>
+        </div>
+        <div class="confirm-actions">
+          <button class="cancel" id="statusCancel">Cancel</button>
+          <button class="ok" id="statusPost">Post status</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Poll creator ============ -->
+    <div class="modal-veil" id="pollModal">
+      <div class="modal-card">
+        <h3>Create poll</h3>
+        <label for="pollQ">Question</label>
+        <input type="text" id="pollQ" placeholder="Ask a question" autocomplete="off" />
+        <label>Option 1</label>
+        <input type="text" class="poll-in" placeholder="Option 1" autocomplete="off" />
+        <label>Option 2</label>
+        <input type="text" class="poll-in" placeholder="Option 2" autocomplete="off" />
+        <label>Option 3 — optional</label>
+        <input type="text" class="poll-in" placeholder="Option 3" autocomplete="off" />
+        <div class="confirm-actions">
+          <button class="cancel" id="pollCancel">Cancel</button>
+          <button class="ok" id="pollCreate">Send poll</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Message info ============ -->
+    <div class="modal-veil" id="infoModal">
+      <div class="modal-card">
+        <h3>Message info</h3>
+        <p class="info-text" id="infoText"></p>
+        <div class="info-line"><span id="infoLabel1">Read</span><span id="infoTime1"></span></div>
+        <div class="info-line" id="infoLine2"><span id="infoLabel2">Delivered</span><span id="infoTime2"></span></div>
+        <div class="confirm-actions">
+          <button class="ok" id="infoClose">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-pop" id="menuPop" hidden></div>
+    <div class="msg-menu" id="msgMenu" hidden></div>
+
     <div class="toast" id="toast" role="status"></div>
 
     <div class="confirm-veil" id="clearVeil">
@@ -1234,6 +1796,8 @@
 
     <input type="file" id="photoInput" accept="image/*,video/*" hidden />
     <input type="file" id="docInput" hidden />
+    <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden />
+    <input type="file" id="audioInput" accept="audio/*" hidden />
 
     <script>
       (function () {
@@ -1294,12 +1858,31 @@
           unreadBadge.textContent = unread > 0 ? unread : "";
         }
 
+        function fmtDur(sec) {
+          sec = Math.max(0, Math.floor(sec || 0));
+          return Math.floor(sec / 60) + ":" + (sec % 60 < 10 ? "0" : "") + (sec % 60);
+        }
+
         function addMessage(opts) {
           var row = document.createElement("div");
           row.className = "msg-row " + opts.who + (lastWho !== opts.who ? " group-start" : "");
           var bubble = document.createElement("div");
           bubble.className = "bubble " + opts.who;
 
+          if (opts.forwarded) {
+            var fw = document.createElement("div");
+            fw.className = "fwd-label";
+            fw.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z"/></svg> Forwarded';
+            bubble.appendChild(fw);
+          }
+          if (opts.quote) {
+            var qb = document.createElement("div");
+            qb.className = "quote";
+            var qn = document.createElement("div"); qn.className = "qname"; qn.textContent = opts.quote.name;
+            var qt = document.createElement("div"); qt.className = "qtext"; qt.textContent = opts.quote.text;
+            qb.appendChild(qn); qb.appendChild(qt);
+            bubble.appendChild(qb);
+          }
           if (opts.imageURL) {
             var img = document.createElement("img");
             img.className = "photo";
@@ -1326,15 +1909,94 @@
             bubble.appendChild(card);
           }
           if (opts.audioURL) {
-            var audio = document.createElement("audio");
-            audio.controls = true;
-            audio.src = opts.audioURL;
-            bubble.appendChild(audio);
+            var vn = document.createElement("div");
+            vn.className = "vnote";
+            var playSVG = '<svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+            var pauseSVG = '<svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+            var vnPlay = document.createElement("button");
+            vnPlay.type = "button";
+            vnPlay.className = "vn-play";
+            vnPlay.setAttribute("aria-label", "Play voice message");
+            vnPlay.innerHTML = playSVG;
+            var vnBars = document.createElement("div");
+            vnBars.className = "vn-bars";
+            for (var bi = 0; bi < 26; bi++) {
+              var vb = document.createElement("i");
+              vb.style.height = Math.round(6 + Math.abs(Math.sin(bi * 1.65)) * 20) + "px";
+              vnBars.appendChild(vb);
+            }
+            var vnDur = document.createElement("span");
+            vnDur.className = "vn-dur";
+            vnDur.textContent = "0:00";
+            var au = document.createElement("audio");
+            au.src = opts.audioURL;
+            au.preload = "metadata";
+            au.style.display = "none";
+            au.addEventListener("loadedmetadata", function () {
+              if (isFinite(au.duration)) vnDur.textContent = fmtDur(au.duration);
+            });
+            au.addEventListener("timeupdate", function () {
+              if (!au.duration) return;
+              var p = au.currentTime / au.duration;
+              var kids = vnBars.children;
+              for (var bj = 0; bj < kids.length; bj++) kids[bj].classList.toggle("played", bj / kids.length <= p);
+              vnDur.textContent = fmtDur(au.currentTime);
+            });
+            au.addEventListener("ended", function () {
+              vnPlay.innerHTML = playSVG;
+              var kids = vnBars.children;
+              for (var bj = 0; bj < kids.length; bj++) kids[bj].classList.remove("played");
+              if (isFinite(au.duration)) vnDur.textContent = fmtDur(au.duration);
+            });
+            vnPlay.addEventListener("click", function () {
+              if (au.paused) { au.play(); vnPlay.innerHTML = pauseSVG; }
+              else { au.pause(); vnPlay.innerHTML = playSVG; }
+            });
+            vn.appendChild(vnPlay);
+            vn.appendChild(vnBars);
+            vn.appendChild(vnDur);
+            vn.appendChild(au);
+            bubble.appendChild(vn);
           }
           if (opts.text) {
             var span = document.createElement("span");
             span.textContent = opts.text;
             bubble.appendChild(span);
+          }
+          if (opts.contact) {
+            var cc = document.createElement("div");
+            cc.className = "contact-card";
+            cc.innerHTML = '<span class="avatar muse">M</span><span><span style="display:block;font-size:15.5px;">Muse</span><span style="display:block;font-size:12.5px;color:var(--text-2);">Your assistant</span></span>';
+            bubble.appendChild(cc);
+            var ca = document.createElement("button");
+            ca.type = "button";
+            ca.className = "contact-actions";
+            ca.textContent = "Message";
+            ca.addEventListener("click", function () { toast("You're already chatting with Muse"); });
+            bubble.appendChild(ca);
+          }
+          if (opts.poll) {
+            var poll = document.createElement("div");
+            poll.className = "poll";
+            poll.setAttribute("data-votes", "{}");
+            var pq = document.createElement("div");
+            pq.className = "poll-q";
+            pq.textContent = opts.poll.question;
+            poll.appendChild(pq);
+            opts.poll.options.forEach(function (label, idx) {
+              var opt = document.createElement("button");
+              opt.type = "button";
+              opt.className = "poll-opt";
+              opt.setAttribute("data-idx", idx);
+              opt.innerHTML = '<span class="ring-o"></span><span class="poll-label"></span><span class="pct"></span><span class="bar"><i></i></span>';
+              opt.querySelector(".poll-label").textContent = label;
+              poll.appendChild(opt);
+            });
+            var pf = document.createElement("div");
+            pf.className = "poll-foot";
+            pf.textContent = "0 votes";
+            poll.appendChild(pf);
+            bubble.appendChild(poll);
           }
           var meta = document.createElement("span");
           meta.className = "meta";
@@ -1434,6 +2096,7 @@
         function autoGrow() {
           composer.style.height = "auto";
           composer.style.height = Math.min(composer.scrollHeight, 110) + "px";
+          if (dictating) { sendBtn.hidden = true; micBtn.style.display = "grid"; return; }
           var has = composer.value.trim().length > 0;
           sendBtn.hidden = !has;
           micBtn.style.display = has ? "none" : "grid";
@@ -1441,6 +2104,7 @@
         composer.addEventListener("input", autoGrow);
 
         function sendCurrent() {
+          if (dictating) stopDictation();
           var text = composer.value.trim();
           if (!text) return;
           composer.value = "";
@@ -1487,13 +2151,17 @@
         function applyListFilter() {
           var q = document.getElementById("chatSearch").value.trim().toLowerCase();
           var matchesName = "muse".indexOf(q) !== -1;
-          var show = matchesName && (activeFilter === "all" || (activeFilter === "unread" && unread > 0));
+          var show = matchesName && (activeFilter === "all" || (activeFilter === "unread" && unread > 0) || (activeFilter === "favourites" && !!window.__chatPinned));
           chatItem.style.display = show ? "" : "none";
           listEmpty.hidden = show;
           if (!show) {
             listEmpty.textContent = activeFilter === "unread" && matchesName
               ? "No unread chats. You're all caught up."
-              : "No chats found for “" + q + "”. This space has just one chat — with Muse.";
+              : activeFilter === "favourites"
+                ? "No favourite chats yet. Long-press the chat with Muse and tap Pin chat to keep it here."
+                : activeFilter === "groups"
+                  ? "No group chats here — this space is just you and Muse, one to one."
+                  : "No chats found for “" + q + "”. This space has just one chat — with Muse.";
           }
         }
         document.getElementById("chatSearch").addEventListener("input", applyListFilter);
@@ -1580,55 +2248,89 @@
           docInput.value = "";
         });
 
-        /* ---- Voice recording ---- */
-        var recBar = document.getElementById("recBar");
-        var recTime = document.getElementById("recTime");
-        var composerBar = document.getElementById("composerBar");
-        var mediaRecorder = null, recChunks = [], recStream = null, recTimerId = null, recStart = 0;
+        /* ---- Dictation: the mic is a reader for the words ----
+           Tapping the mic starts the device's speech recognition and the
+           spoken words land as TEXT in the message box, to be sent as a
+           normal text message. It never records a voice note. */
+        var dictBar = document.getElementById("dictBar");
+        var dictText = document.getElementById("dictText");
+        var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+        var recog = null, dictating = false, dictBase = "", dictFinal = "", dictError = "";
 
-        function stopStream() {
-          if (recStream) { recStream.getTracks().forEach(function (t) { t.stop(); }); recStream = null; }
-          clearInterval(recTimerId);
-          recBar.classList.remove("on");
-          composerBar.style.display = "";
+        function setDictUI(on) {
+          dictating = on;
+          dictBar.classList.toggle("on", on);
+          micBtn.classList.toggle("listening", on);
+          micBtn.setAttribute("aria-label", on ? "Stop dictation" : "Dictate message");
+          if (on) {
+            dictText.textContent = "Listening… speak — your words appear as text";
+            sendBtn.hidden = true;
+            micBtn.style.display = "grid";
+          } else {
+            autoGrow();
+          }
+        }
+        function stopDictation() {
+          if (recog) {
+            var r = recog;
+            recog = null;
+            r.onresult = null; r.onend = null; r.onerror = null;
+            try { r.stop(); } catch (e) {}
+          }
+          if (dictating) setDictUI(false);
+        }
+        function dictationFallback() {
+          composer.focus();
+          toast("Dictation isn't built into this browser — tap the mic key on your keyboard and your words become text.");
         }
         micBtn.addEventListener("click", function () {
-          if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === "undefined") {
-            toast("Voice messages aren't available in this view — typing works great.");
-            return;
-          }
-          navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
-            recStream = stream;
-            recChunks = [];
-            mediaRecorder = new MediaRecorder(stream);
-            mediaRecorder.ondataavailable = function (e) { if (e.data.size) recChunks.push(e.data); };
-            mediaRecorder.start();
-            recBar.classList.add("on");
-            composerBar.style.display = "none";
-            recStart = Date.now();
-            recTime.textContent = "0:00";
-            recTimerId = setInterval(function () {
-              var s = Math.floor((Date.now() - recStart) / 1000);
-              recTime.textContent = Math.floor(s / 60) + ":" + (s % 60 < 10 ? "0" : "") + (s % 60);
-            }, 250);
-          }).catch(function () {
-            toast("Microphone isn't available in this view — typing works great.");
-          });
-        });
-        document.getElementById("recCancel").addEventListener("click", function () {
-          if (mediaRecorder && mediaRecorder.state !== "inactive") { mediaRecorder.onstop = null; mediaRecorder.stop(); }
-          stopStream();
-        });
-        document.getElementById("recSend").addEventListener("click", function () {
-          if (!mediaRecorder) { stopStream(); return; }
-          mediaRecorder.onstop = function () {
-            var blob = new Blob(recChunks, { type: mediaRecorder.mimeType || "audio/webm" });
-            var url = URL.createObjectURL(blob);
-            addMessage({ who: "out", audioURL: url, time: new Date(), state: "delivered" });
-            stopStream();
-            scheduleReply("🎤 Voice message");
+          if (dictating) { stopDictation(); return; }
+          if (!SpeechRec) { dictationFallback(); return; }
+          dictBase = composer.value ? composer.value.replace(/\s+$/, "") + " " : "";
+          dictFinal = "";
+          dictError = "";
+          try { recog = new SpeechRec(); } catch (e) { recog = null; }
+          if (!recog) { dictationFallback(); return; }
+          recog.continuous = true;
+          recog.interimResults = true;
+          try { recog.lang = navigator.language || "en-US"; } catch (e) {}
+          recog.onresult = function (ev) {
+            var interim = "";
+            for (var i = ev.resultIndex; i < ev.results.length; i++) {
+              var res = ev.results[i];
+              if (res.isFinal) dictFinal += res[0].transcript;
+              else interim += res[0].transcript;
+            }
+            composer.value = dictBase + dictFinal + interim;
+            if (composer.value.trim()) dictText.textContent = "Listening…";
+            autoGrow();
           };
-          if (mediaRecorder.state !== "inactive") mediaRecorder.stop();
+          recog.onerror = function (ev) { dictError = (ev && ev.error) || ""; };
+          recog.onend = function () {
+            recog = null;
+            if (!dictating) return;
+            setDictUI(false);
+            if (dictError === "not-allowed" || dictError === "service-not-allowed") {
+              composer.focus();
+              toast("Microphone is blocked — tap the mic key on your keyboard to dictate instead.");
+            } else if (dictError === "no-speech") {
+              toast("Didn't catch that — tap the mic and try again.");
+            } else if (dictError && dictError !== "aborted") {
+              composer.focus();
+              toast("Dictation stopped — tap the mic key on your keyboard to dictate.");
+            }
+          };
+          try {
+            recog.start();
+            setDictUI(true);
+          } catch (e) {
+            recog = null;
+            dictationFallback();
+          }
+        });
+        document.getElementById("dictDone").addEventListener("click", function () {
+          stopDictation();
+          composer.focus();
         });
 
         /* ---- Header buttons that can't work in a static page ---- */
@@ -1678,6 +2380,8 @@
           updateList("Chat cleared", new Date(), null, false);
           toast("Chat cleared");
         });
+
+        window.__waChat = { addMessage: addMessage, scheduleReply: scheduleReply, toast: toast, openChat: openChat, closeChat: closeChat, fmtTime: fmtTime };
 
         autoGrow();
         scrollDown();
@@ -2203,7 +2907,7 @@
         window.__waSounds = { tap: playTap, pop: playPop, send: playSend, receive: playReceive, tick: playTick };
 
         function isSendTarget(el) {
-          return !!(el.closest && el.closest("#sendBtn, #recSend, #aiSendChat, #createBtn, #loginBtn, #friendCreateBtn"));
+          return !!(el.closest && el.closest("#sendBtn, #dictDone, #aiSendChat, #createBtn, #loginBtn, #friendCreateBtn"));
         }
         function isPopTarget(el) {
           return !!(el.closest && el.closest("#chatItem, #fabBtn, #newChatBtn, #peerBtn, #openVipSite, #aiSearchBtn, #aiLaunchBtn, #viewerBack, #viewerBackChat"));
@@ -2296,6 +3000,665 @@
             }, 30);
           }
         }, true);
+      })();
+    </script>
+
+    <script>
+      (function () {
+        "use strict";
+        /* ============ Real-WhatsApp surface: tabs, menus, status, calls, settings ============
+           Everything here is front-end behaviour for this page, in the same spirit as
+           the rest of the app: the only contact is Muse, state lives in this page's
+           memory only, and nothing is sent anywhere. */
+        function $(id) { return document.getElementById(id); }
+        var WA = window.__waChat;
+        if (!WA) return;
+        var toast = WA.toast;
+        var thread = $("thread");
+        var messagesEl = $("messages");
+
+        /* ---------------- Tabs ---------------- */
+        var views = { chats: $("viewChats"), updates: $("viewUpdates"), communities: $("viewCommunities"), calls: $("viewCalls") };
+        var currentTab = "chats";
+        function showTab(name) {
+          currentTab = name;
+          Object.keys(views).forEach(function (k) { views[k].hidden = k !== name; });
+          document.querySelectorAll(".tab").forEach(function (t) {
+            t.classList.toggle("active", t.getAttribute("data-tab") === name);
+          });
+          $("fabBtn").style.display = name === "chats" ? "" : "none";
+          $("callsFab").hidden = name !== "calls";
+        }
+        document.querySelectorAll(".tab").forEach(function (t) {
+          t.addEventListener("click", function () { showTab(t.getAttribute("data-tab")); });
+        });
+        $("statusBtn").addEventListener("click", function () { showTab("updates"); });
+
+        /* Unread badge mirrored onto the Chats tab, like the real app. */
+        var tabBadge = $("tabBadge"), ub = $("unreadBadge");
+        function syncBadge() { tabBadge.hidden = ub.hidden; tabBadge.textContent = ub.textContent; }
+        new MutationObserver(syncBadge).observe(ub, { attributes: true, childList: true, characterData: true });
+        syncBadge();
+
+        /* ---------------- Dropdown menus (header ⋮ buttons) ---------------- */
+        var menuPop = $("menuPop");
+        function closeMenu() { menuPop.hidden = true; }
+        function openMenuAt(x, y, items) {
+          menuPop.innerHTML = "";
+          items.forEach(function (it) {
+            var b = document.createElement("button");
+            b.type = "button";
+            b.textContent = it.label;
+            b.addEventListener("click", function () { closeMenu(); it.fn(); });
+            menuPop.appendChild(b);
+          });
+          menuPop.hidden = false;
+          var w = menuPop.offsetWidth || 214;
+          menuPop.style.left = Math.max(8, Math.min(x, window.innerWidth - w - 8)) + "px";
+          menuPop.style.top = Math.max(8, Math.min(y, window.innerHeight - items.length * 42 - 30)) + "px";
+        }
+        function openMenu(anchor, items) {
+          var r = anchor.getBoundingClientRect();
+          openMenuAt(r.right - 214, r.bottom + 6, items);
+        }
+        document.addEventListener("pointerdown", function (e) {
+          if (!menuPop.hidden && !e.target.closest("#menuPop") && !e.target.closest("#sideMenuBtn, #chatMenuBtn")) closeMenu();
+        }, true);
+
+        /* ---------------- Settings ---------------- */
+        function openSettings() {
+          $("setSoundSwitch").setAttribute("aria-checked", $("soundToggleBtn").getAttribute("aria-pressed") === "false" ? "false" : "true");
+          $("settingsScreen").hidden = false;
+        }
+        function closeSettings() { $("settingsScreen").hidden = true; }
+        $("setBack").addEventListener("click", closeSettings);
+        $("meAvatar").addEventListener("click", openSettings);
+        $("meAvatar").addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openSettings(); } });
+        $("setName").addEventListener("change", function () { toast("Name updated — it shows here in Settings"); });
+        $("setAbout").addEventListener("change", function () { toast("About updated"); });
+        $("setSounds").addEventListener("click", function () {
+          $("soundToggleBtn").click();
+          $("setSoundSwitch").setAttribute("aria-checked", $("soundToggleBtn").getAttribute("aria-pressed") === "false" ? "false" : "true");
+        });
+        $("setNotify").addEventListener("click", function () {
+          var sw = $("setNotifySwitch");
+          var on = sw.getAttribute("aria-checked") !== "true";
+          sw.setAttribute("aria-checked", String(on));
+          toast(on ? "Message notifications on" : "Message notifications off");
+        });
+        $("setPrivacy").addEventListener("click", function () { toast("This chat is only you and Muse — nothing here is shared with anyone else."); });
+        $("setStorage").addEventListener("click", function () { toast("This conversation lives on this page only — close the page and it's gone."); });
+        $("setHelp").addEventListener("click", function () { toast("Kosher WhatsApp: one quiet chat with Muse, with the same filter as your regular chat."); });
+        $("setLock").addEventListener("click", function () { closeSettings(); $("lockBtn").click(); });
+        $("setStarred").addEventListener("click", function () { openStarred(); });
+        $("setArchived").addEventListener("click", function () { closeSettings(); showTab("chats"); setArchivedMode(true); });
+
+        /* Wallpaper picker */
+        var WP = { default: null, mint: "#dcefe2", rose: "#f6e3e0", sky: "#dde9f5", sand: "#f1e8d5", lilac: "#e7e2f2", night: "#0b141a", plain: "#ffffff" };
+        $("wpGrid").addEventListener("click", function (e) {
+          var btn = e.target.closest ? e.target.closest("[data-wp]") : null;
+          if (!btn) return;
+          $("wpGrid").querySelectorAll(".wp-swatch").forEach(function (s) { s.classList.remove("sel"); });
+          btn.classList.add("sel");
+          var c = WP[btn.getAttribute("data-wp")];
+          if (!c) { messagesEl.style.backgroundColor = ""; messagesEl.style.backgroundImage = ""; }
+          else { messagesEl.style.backgroundColor = c; messagesEl.style.backgroundImage = "none"; }
+          toast("Wallpaper updated");
+        });
+
+        /* ---------------- Archived ---------------- */
+        var isArchived = false, archivedMode = false;
+        function setArchived(on) {
+          isArchived = on;
+          var item = $("chatItem");
+          if (on) $("archivedList").appendChild(item);
+          else $("chatList").insertBefore(item, $("listEmpty"));
+          $("archCount").hidden = !on;
+          $("archCount").textContent = on ? "1" : "";
+          $("setArchSub").textContent = on ? "1 chat archived" : "None archived";
+          $("archivedEmpty").hidden = on;
+          toast(on ? "Chat archived" : "Chat unarchived");
+        }
+        function setArchivedMode(on) {
+          archivedMode = on;
+          $("viewChats").classList.toggle("arch-mode", on);
+          $("archivedPanel").hidden = !on;
+          $("archivedRow").hidden = on;
+          $("archivedEmpty").hidden = isArchived;
+        }
+        $("archivedRow").addEventListener("click", function () { setArchivedMode(true); });
+        $("archivedBack").addEventListener("click", function () { setArchivedMode(false); });
+
+        /* ---------------- Chat-item menu (pin / mute / archive / unread) ---------------- */
+        var chatMuted = false;
+        window.__chatPinned = false;
+        function chatMenuItems() {
+          return [
+            { label: isArchived ? "Unarchive chat" : "Archive chat", fn: function () { setArchived(!isArchived); } },
+            { label: window.__chatPinned ? "Unpin chat" : "Pin chat", fn: function () {
+              window.__chatPinned = !window.__chatPinned;
+              $("pinIcon").hidden = !window.__chatPinned;
+              toast(window.__chatPinned ? "Chat pinned" : "Chat unpinned");
+            } },
+            { label: chatMuted ? "Unmute notifications" : "Mute notifications", fn: function () {
+              chatMuted = !chatMuted;
+              $("muteIcon").hidden = !chatMuted;
+              toast(chatMuted ? "Notifications muted for this chat" : "Notifications unmuted");
+            } },
+            { label: "Mark as unread", fn: function () {
+              ub.hidden = false; ub.textContent = "1";
+              $("listTime").classList.add("unread");
+              syncBadge();
+              toast("Marked as unread");
+            } }
+          ];
+        }
+        var chatItem = $("chatItem");
+        chatItem.addEventListener("contextmenu", function (e) { e.preventDefault(); openMenuAt(e.clientX, e.clientY, chatMenuItems()); });
+        var ciTimer = null;
+        chatItem.addEventListener("pointerdown", function (e) {
+          if (e.pointerType === "mouse") return;
+          ciTimer = setTimeout(function () {
+            var r = chatItem.getBoundingClientRect();
+            openMenuAt(r.left + 30, r.top + 12, chatMenuItems());
+          }, 550);
+        });
+        ["pointerup", "pointercancel", "pointermove"].forEach(function (ev) {
+          chatItem.addEventListener(ev, function () { clearTimeout(ciTimer); });
+        });
+
+        /* ---------------- Header menus ---------------- */
+        $("sideMenuBtn").addEventListener("click", function () {
+          if (!menuPop.hidden) { closeMenu(); return; }
+          openMenu(this, [
+            { label: "New group", fn: function () { toast("Groups aren't part of this space — it's just you and Muse here."); } },
+            { label: "New broadcast", fn: function () { toast("Broadcasts aren't part of this space — one quiet chat only."); } },
+            { label: "Starred messages", fn: openStarred },
+            { label: "Settings", fn: openSettings },
+            { label: "Lock", fn: function () { $("lockBtn").click(); } }
+          ]);
+        });
+        $("chatMenuBtn").addEventListener("click", function () {
+          if (!menuPop.hidden) { closeMenu(); return; }
+          openMenu(this, [
+            { label: "Contact info", fn: function () { $("peerBtn").click(); } },
+            { label: "Mute notifications", fn: function () {
+              chatMuted = !chatMuted;
+              $("muteIcon").hidden = !chatMuted;
+              toast(chatMuted ? "Notifications muted for this chat" : "Notifications unmuted");
+            } },
+            { label: "Wallpaper", fn: function () { openSettings(); setTimeout(function () { $("wpGrid").scrollIntoView({ block: "center" }); }, 60); } },
+            { label: "Disappearing messages", fn: function () { toast("Messages here already disappear when the page closes — nothing is kept."); } },
+            { label: "Clear chat", fn: function () { $("clearVeil").classList.add("on"); } }
+          ]);
+        });
+        $("headSearchBtn").addEventListener("click", function () {
+          WA.closeChat();
+          showTab("chats");
+          setTimeout(function () { $("chatSearch").focus(); }, 60);
+        });
+
+        /* ---------------- Message menu: reactions, reply, forward, star, info, copy, delete ---------------- */
+        var msgMenu = $("msgMenu");
+        var pendingQuote = null, pendingReaction = null;
+        var REACTIONS = ["❤️", "😂", "👍", "😮", "😢", "🙏"];
+        function closeMsgMenu() { msgMenu.hidden = true; }
+        function bubbleText(b) {
+          var spans = b.querySelectorAll(":scope > span");
+          for (var i = 0; i < spans.length; i++) if (!spans[i].className) return spans[i].textContent;
+          return "";
+        }
+        function mediaLabel(b) {
+          if (b.querySelector(".vnote")) return "🎤 Voice message";
+          if (b.querySelector(".poll")) return "📊 Poll";
+          if (b.querySelector(".contact-card")) return "Contact: Muse";
+          if (b.querySelector("img.photo")) return "📷 Photo";
+          if (b.querySelector("video")) return "🎥 Video";
+          if (b.querySelector(".file-card")) return "📄 Document";
+          return "Message";
+        }
+        function applyReaction(b, em) {
+          var badge = b.querySelector(".reaction-badge");
+          var row = b.parentElement;
+          if (badge && badge.textContent === em) { badge.remove(); row.classList.remove("has-reaction"); return; }
+          if (!badge) { badge = document.createElement("span"); badge.className = "reaction-badge"; b.appendChild(badge); }
+          badge.textContent = em;
+          row.classList.add("has-reaction");
+        }
+        function setReply(b) {
+          pendingQuote = { name: b.classList.contains("out") ? "You" : "Muse", text: bubbleText(b) || mediaLabel(b) };
+          $("replyName").textContent = pendingQuote.name;
+          $("replyText").textContent = pendingQuote.text;
+          $("replyBar").hidden = false;
+          $("composer").focus();
+        }
+        $("replyCancel").addEventListener("click", function () {
+          pendingQuote = null;
+          $("replyBar").hidden = true;
+        });
+        function copyText(text) {
+          function done() { toast("Copied"); }
+          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, done);
+          else done();
+        }
+        function toggleStar(b) {
+          var meta = b.querySelector(".meta");
+          if (b.dataset.starred === "1") {
+            b.dataset.starred = "";
+            var s = b.querySelector(".star-ic");
+            if (s) s.remove();
+            toast("Removed from starred messages");
+          } else {
+            b.dataset.starred = "1";
+            var st = document.createElement("span");
+            st.className = "star-ic";
+            st.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg>';
+            if (meta) meta.appendChild(st);
+            toast("Message starred");
+          }
+        }
+        function showInfo(b) {
+          var ts = parseInt(b.dataset.ts || String(Date.now()), 10);
+          $("infoText").textContent = bubbleText(b) || mediaLabel(b);
+          if (b.classList.contains("out")) {
+            $("infoLabel1").textContent = "Read";
+            $("infoTime1").textContent = WA.fmtTime(new Date(Math.min(ts + 90000, Date.now())));
+            $("infoLabel2").textContent = "Delivered";
+            $("infoTime2").textContent = WA.fmtTime(new Date(ts));
+            $("infoLine2").style.display = "";
+          } else {
+            $("infoLabel1").textContent = "Received";
+            $("infoTime1").textContent = WA.fmtTime(new Date(ts));
+            $("infoLine2").style.display = "none";
+          }
+          $("infoModal").classList.add("on");
+        }
+        $("infoClose").addEventListener("click", function () { $("infoModal").classList.remove("on"); });
+        $("infoModal").addEventListener("click", function (e) { if (e.target === this) this.classList.remove("on"); });
+        function openMsgMenu(b, x, y) {
+          msgMenu.innerHTML = "";
+          var rx = document.createElement("div");
+          rx.className = "rxn-row";
+          REACTIONS.forEach(function (em) {
+            var rb = document.createElement("button");
+            rb.type = "button";
+            rb.textContent = em;
+            rb.setAttribute("aria-label", "React " + em);
+            rb.addEventListener("click", function () { applyReaction(b, em); closeMsgMenu(); });
+            rx.appendChild(rb);
+          });
+          var plus = document.createElement("button");
+          plus.type = "button";
+          plus.textContent = "+";
+          plus.setAttribute("aria-label", "More reactions");
+          plus.addEventListener("click", function () {
+            pendingReaction = b;
+            closeMsgMenu();
+            if (!$("emojiPanel").classList.contains("on")) $("emojiBtn").click();
+          });
+          rx.appendChild(plus);
+          msgMenu.appendChild(rx);
+          var text = bubbleText(b);
+          var items = [
+            { label: "Reply", fn: function () { setReply(b); } },
+            text ? { label: "Copy", fn: function () { copyText(text); } } : null,
+            { label: "Forward", fn: function () {
+              var t = bubbleText(b);
+              if (!t) { toast("Only text messages can be forwarded here."); return; }
+              WA.addMessage({ who: "out", text: t, forwarded: true, time: new Date(), state: "read" });
+              toast("Forwarded to Muse");
+            } },
+            { label: b.dataset.starred === "1" ? "Unstar" : "Star", fn: function () { toggleStar(b); } },
+            { label: "Info", fn: function () { showInfo(b); } },
+            { label: "Delete", danger: true, fn: function () {
+              var row = b.parentElement;
+              if (row) row.remove();
+              toast("Message deleted");
+            } }
+          ];
+          items.forEach(function (it) {
+            if (!it) return;
+            var btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "mi" + (it.danger ? " danger" : "");
+            btn.textContent = it.label;
+            btn.addEventListener("click", function () { closeMsgMenu(); it.fn(); });
+            msgMenu.appendChild(btn);
+          });
+          msgMenu.hidden = false;
+          var w = msgMenu.offsetWidth || 230, h = msgMenu.offsetHeight || 300;
+          msgMenu.style.left = Math.max(8, Math.min(x, window.innerWidth - w - 8)) + "px";
+          msgMenu.style.top = Math.max(8, Math.min(y, window.innerHeight - h - 8)) + "px";
+        }
+        thread.addEventListener("contextmenu", function (e) {
+          var b = e.target.closest ? e.target.closest(".bubble") : null;
+          if (!b) return;
+          e.preventDefault();
+          openMsgMenu(b, e.clientX, e.clientY);
+        });
+        var lpTimer = null;
+        thread.addEventListener("pointerdown", function (e) {
+          if (e.pointerType === "mouse") return;
+          var b = e.target.closest ? e.target.closest(".bubble") : null;
+          if (!b) return;
+          lpTimer = setTimeout(function () {
+            var r = b.getBoundingClientRect();
+            openMsgMenu(b, r.left, r.bottom + 8);
+          }, 550);
+        });
+        ["pointerup", "pointercancel", "pointermove"].forEach(function (ev) {
+          thread.addEventListener(ev, function () { clearTimeout(lpTimer); });
+        });
+        messagesEl.addEventListener("scroll", function () { closeMsgMenu(); }, { passive: true });
+        document.addEventListener("pointerdown", function (e) {
+          if (!msgMenu.hidden && !e.target.closest("#msgMenu")) closeMsgMenu();
+        }, true);
+        /* Emoji panel doubles as the full reaction picker when opened from a message. */
+        $("emojiGrid").addEventListener("click", function (e) {
+          if (!pendingReaction) return;
+          var btn = e.target.closest ? e.target.closest("button") : null;
+          if (!btn) return;
+          e.preventDefault();
+          e.stopPropagation();
+          applyReaction(pendingReaction, btn.textContent);
+          pendingReaction = null;
+          $("emojiBtn").click();
+        }, true);
+
+        /* Stamp times on bubbles (for Info) and attach pending quotes to sent messages. */
+        function stamp(b, ts) { if (b && !b.dataset.ts) b.dataset.ts = String(ts || Date.now()); }
+        thread.querySelectorAll(".bubble").forEach(function (b, i, all) {
+          stamp(b, Date.now() - (all.length - i) * 60000);
+        });
+        new MutationObserver(function (muts) {
+          muts.forEach(function (mu) {
+            mu.addedNodes.forEach(function (node) {
+              if (node.nodeType !== 1 || !node.classList || !node.classList.contains("msg-row")) return;
+              var b = node.querySelector(".bubble");
+              if (!b) return;
+              stamp(b);
+              if (node.classList.contains("out") && pendingQuote) {
+                var qb = document.createElement("div");
+                qb.className = "quote";
+                var qn = document.createElement("div"); qn.className = "qname"; qn.textContent = pendingQuote.name;
+                var qt = document.createElement("div"); qt.className = "qtext"; qt.textContent = pendingQuote.text;
+                qb.appendChild(qn); qb.appendChild(qt);
+                b.insertBefore(qb, b.firstChild);
+                pendingQuote = null;
+                $("replyBar").hidden = true;
+              }
+            });
+          });
+        }).observe(thread, { childList: true });
+
+        /* ---------------- Starred view ---------------- */
+        function openStarred() {
+          var list = $("starredList");
+          list.innerHTML = "";
+          var starred = thread.querySelectorAll('.bubble[data-starred="1"]');
+          $("starredEmpty").hidden = starred.length > 0;
+          starred.forEach(function (b) {
+            var item = document.createElement("button");
+            item.type = "button";
+            item.className = "star-item";
+            item.innerHTML = '<span class="star-who"></span><span class="star-txt"></span><span class="star-time"></span>';
+            item.querySelector(".star-who").textContent = b.classList.contains("out") ? "You" : "Muse";
+            item.querySelector(".star-txt").textContent = bubbleText(b) || mediaLabel(b);
+            item.querySelector(".star-time").textContent = WA.fmtTime(new Date(parseInt(b.dataset.ts || "0", 10) || Date.now()));
+            item.addEventListener("click", function () {
+              $("starredScreen").hidden = true;
+              closeSettings();
+              WA.openChat();
+              setTimeout(function () {
+                b.scrollIntoView({ block: "center", behavior: "smooth" });
+                b.classList.remove("flash");
+                void b.offsetWidth;
+                b.classList.add("flash");
+              }, 80);
+            });
+            list.appendChild(item);
+          });
+          $("starredScreen").hidden = false;
+        }
+        $("starredBack").addEventListener("click", function () { $("starredScreen").hidden = true; });
+
+        /* ---------------- Polls: voting ---------------- */
+        thread.addEventListener("click", function (e) {
+          var opt = e.target.closest ? e.target.closest(".poll-opt") : null;
+          if (!opt) return;
+          var poll = opt.closest(".poll");
+          if (!poll) return;
+          var votes = {};
+          try { votes = JSON.parse(poll.getAttribute("data-votes") || "{}"); } catch (err) { votes = {}; }
+          var idx = opt.getAttribute("data-idx");
+          var prev = poll.getAttribute("data-myvote");
+          if (prev === idx) { delete votes[idx]; poll.removeAttribute("data-myvote"); }
+          else {
+            if (prev !== null && votes[prev]) votes[prev]--;
+            votes[idx] = (votes[idx] || 0) + 1;
+            poll.setAttribute("data-myvote", idx);
+          }
+          poll.setAttribute("data-votes", JSON.stringify(votes));
+          var total = 0;
+          Object.keys(votes).forEach(function (k) { total += votes[k]; });
+          poll.querySelectorAll(".poll-opt").forEach(function (o) {
+            var i = o.getAttribute("data-idx");
+            var c = votes[i] || 0;
+            var pct = total ? Math.round(c / total * 100) : 0;
+            o.querySelector(".pct").textContent = total ? pct + "%" : "";
+            o.querySelector(".bar i").style.width = pct + "%";
+            var mine = poll.getAttribute("data-myvote") === i;
+            o.classList.toggle("voted", mine);
+            o.querySelector(".ring-o").innerHTML = mine ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>' : "";
+          });
+          poll.querySelector(".poll-foot").textContent = total + (total === 1 ? " vote" : " votes");
+        });
+
+        /* ---------------- Attach sheet extras ---------------- */
+        function closeAttach() {
+          $("attachMenu").classList.remove("on");
+          $("attachBtn").classList.remove("active");
+        }
+        $("attachCamera").addEventListener("click", function () { closeAttach(); $("cameraInput").click(); });
+        $("attachAudio").addEventListener("click", function () { closeAttach(); $("audioInput").click(); });
+        $("attachLocation").addEventListener("click", function () { closeAttach(); toast("Location sharing is off in this quiet space."); });
+        $("attachContact").addEventListener("click", function () {
+          closeAttach();
+          WA.addMessage({ who: "out", contact: true, time: new Date(), state: "delivered" });
+          WA.scheduleReply("Contact card");
+        });
+        $("attachPoll").addEventListener("click", function () { closeAttach(); $("pollModal").classList.add("on"); setTimeout(function () { $("pollQ").focus(); }, 60); });
+        $("cameraInput").addEventListener("change", function () {
+          var f = this.files && this.files[0];
+          if (!f) return;
+          WA.addMessage({ who: "out", imageURL: URL.createObjectURL(f), alt: f.name, time: new Date(), state: "delivered" });
+          WA.scheduleReply("📷 Photo");
+          this.value = "";
+        });
+        $("audioInput").addEventListener("change", function () {
+          var f = this.files && this.files[0];
+          if (!f) return;
+          WA.addMessage({ who: "out", audioURL: URL.createObjectURL(f), time: new Date(), state: "delivered" });
+          WA.scheduleReply("🎤 Voice message");
+          this.value = "";
+        });
+        $("pollCancel").addEventListener("click", function () { $("pollModal").classList.remove("on"); });
+        $("pollModal").addEventListener("click", function (e) { if (e.target === this) this.classList.remove("on"); });
+        $("pollCreate").addEventListener("click", function () {
+          var q = $("pollQ").value.trim();
+          var opts = [];
+          document.querySelectorAll(".poll-in").forEach(function (inp) {
+            var v = inp.value.trim();
+            if (v) opts.push(v);
+          });
+          if (!q) { toast("Give the poll a question first"); return; }
+          if (opts.length < 2) { toast("A poll needs at least two options"); return; }
+          $("pollModal").classList.remove("on");
+          $("pollQ").value = "";
+          document.querySelectorAll(".poll-in").forEach(function (inp) { inp.value = ""; });
+          WA.addMessage({ who: "out", poll: { question: q, options: opts }, time: new Date(), state: "delivered" });
+          WA.scheduleReply("📊 Poll: " + q);
+        });
+
+        /* ---------------- Status ---------------- */
+        var MUSE_STATUS = { who: "Muse", text: "Here whenever you need me — for a question, a plan, or just to talk.", color: "#008069", mine: false };
+        var museWhen = new Date(Date.now() - 47 * 60000);
+        MUSE_STATUS.when = "Today, " + WA.fmtTime(museWhen);
+        $("museStatusTime").textContent = MUSE_STATUS.when;
+        var myStatus = null;
+        var statusColor = "#008069";
+        var statusTimer = null;
+        function openStatus(st) {
+          var v = $("statusView");
+          v.style.background = st.color;
+          $("statusText").textContent = st.text;
+          $("statusWho").textContent = st.who;
+          $("statusWhen").textContent = st.when;
+          var av = $("statusAvatar");
+          if (st.mine) {
+            av.className = "avatar me";
+            av.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#ffffff"><circle cx="12" cy="8" r="4.2"/><path d="M12 13.4c-4.6 0-8 2.5-8 5.6 0 .6.4 1 1 1h14c.6 0 1-.4 1-1 0-3.1-3.4-5.6-8-5.6z"/></svg>';
+          } else {
+            av.className = "avatar muse";
+            av.textContent = "M";
+          }
+          $("statusDelete").hidden = !st.mine;
+          v.hidden = false;
+          var prog = $("statusProg");
+          prog.style.transition = "none";
+          prog.style.width = "0";
+          void prog.offsetWidth;
+          prog.style.transition = "width 5s linear";
+          prog.style.width = "100%";
+          clearTimeout(statusTimer);
+          statusTimer = setTimeout(closeStatus, 5400);
+        }
+        function closeStatus() {
+          clearTimeout(statusTimer);
+          $("statusView").hidden = true;
+        }
+        $("statusClose").addEventListener("click", closeStatus);
+        $("statusDelete").addEventListener("click", function () {
+          myStatus = null;
+          $("myStatusRing").classList.add("off");
+          $("myStatusPlus").hidden = false;
+          $("myStatusSub").textContent = "Tap to add status update";
+          closeStatus();
+          toast("Status deleted");
+        });
+        $("museStatusRow").addEventListener("click", function () { openStatus(MUSE_STATUS); });
+        $("myStatusRow").addEventListener("click", function () {
+          if (myStatus) openStatus(myStatus);
+          else { $("statusEditor").classList.add("on"); setTimeout(function () { $("statusInput").focus(); }, 60); }
+        });
+        $("statusSwatches").addEventListener("click", function (e) {
+          var sw = e.target.closest ? e.target.closest("[data-color]") : null;
+          if (!sw) return;
+          statusColor = sw.getAttribute("data-color");
+          this.querySelectorAll(".swatch").forEach(function (s) { s.classList.remove("sel"); });
+          sw.classList.add("sel");
+        });
+        $("statusCancel").addEventListener("click", function () { $("statusEditor").classList.remove("on"); });
+        $("statusEditor").addEventListener("click", function (e) { if (e.target === this) this.classList.remove("on"); });
+        $("statusPost").addEventListener("click", function () {
+          var text = $("statusInput").value.trim();
+          if (!text) { toast("Write something first"); return; }
+          myStatus = { who: "My status", text: text, color: statusColor, when: "Today, " + WA.fmtTime(new Date()), mine: true };
+          $("myStatusRing").classList.remove("off");
+          $("myStatusPlus").hidden = true;
+          $("myStatusSub").textContent = myStatus.when;
+          $("statusInput").value = "";
+          $("statusEditor").classList.remove("on");
+          toast("Status posted — only visible in this chat");
+        });
+
+        /* ---------------- Communities ---------------- */
+        $("newCommunityBtn").addEventListener("click", function () { toast("Communities grow out of your chats — tell Muse in the chat what you'd like to gather."); });
+        $("commAnnounce").addEventListener("click", function () { toast("Announcements from Muse land right in the chat."); });
+        $("commVip").addEventListener("click", function () { showTab("chats"); $("openVipSite").click(); });
+        $("commChat").addEventListener("click", function () { showTab("chats"); $("chatItem").click(); });
+
+        /* ---------------- Calls ---------------- */
+        var PHONE_SVG = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.4 11.4 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.57 1 1 0 0 1-.25 1.02l-2.2 2.2z"/></svg>';
+        var VIDEO_SVG = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/></svg>';
+        var OUT_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#25a244" stroke-width="2.4" stroke-linecap="round"><path d="M7 17L17 7M9 7h8v8"/></svg>';
+        function fmtCallDur(s) { return Math.floor(s / 60) + ":" + (s % 60 < 10 ? "0" : "") + (s % 60); }
+        var callInterval = null, callTimeout = null, callSecs = 0, callOn = false, callMode = "voice";
+        function startCall(mode) {
+          callMode = mode;
+          callSecs = 0;
+          callOn = false;
+          $("callScreen").hidden = false;
+          $("callStatus").textContent = "Calling…";
+          $("callAvatar").classList.add("pulse");
+          $("callSelf").hidden = mode !== "video";
+          $("callVideoTgl").classList.toggle("on", mode === "video");
+          $("callMute").classList.remove("on");
+          $("callSpeaker").classList.remove("on");
+          clearTimeout(callTimeout);
+          clearInterval(callInterval);
+          callTimeout = setTimeout(function () {
+            callOn = true;
+            $("callAvatar").classList.remove("pulse");
+            $("callStatus").textContent = "0:00";
+            callInterval = setInterval(function () {
+              callSecs++;
+              $("callStatus").textContent = fmtCallDur(callSecs);
+            }, 1000);
+          }, 2200);
+        }
+        function addCallLog(mode, label) {
+          var row = document.createElement("button");
+          row.type = "button";
+          row.className = "call-row";
+          row.setAttribute("data-call-mode", mode);
+          row.innerHTML = '<span class="avatar muse">M</span><span class="call-meta"><span class="call-name">Muse</span><span class="call-dir">' + OUT_SVG + '<span></span></span></span><span class="call-go">' + (mode === "video" ? VIDEO_SVG : PHONE_SVG) + "</span>";
+          row.querySelector(".call-dir span").textContent = "Just now · " + label;
+          var log = $("callLog");
+          log.insertBefore(row, log.firstChild);
+        }
+        function endCall() {
+          clearTimeout(callTimeout);
+          clearInterval(callInterval);
+          $("callAvatar").classList.remove("pulse");
+          $("callStatus").textContent = "Call ended";
+          addCallLog(callMode, callOn ? "Duration " + fmtCallDur(callSecs) : "Cancelled");
+          setTimeout(function () { $("callScreen").hidden = true; }, 650);
+        }
+        $("callEnd").addEventListener("click", endCall);
+        $("callMute").addEventListener("click", function () { this.classList.toggle("on"); });
+        $("callSpeaker").addEventListener("click", function () { this.classList.toggle("on"); });
+        $("callVideoTgl").addEventListener("click", function () {
+          var on = !this.classList.contains("on");
+          this.classList.toggle("on", on);
+          $("callSelf").hidden = !on;
+          callMode = on ? "video" : "voice";
+        });
+        $("callMsg").addEventListener("click", function () {
+          clearTimeout(callTimeout);
+          clearInterval(callInterval);
+          $("callScreen").hidden = true;
+          WA.openChat();
+        });
+        $("callLog").addEventListener("click", function (e) {
+          var row = e.target.closest ? e.target.closest(".call-row") : null;
+          if (row) startCall(row.getAttribute("data-call-mode") || "voice");
+        });
+        $("callsFab").addEventListener("click", function () { startCall("voice"); });
+        $("headVoiceBtn").addEventListener("click", function () { startCall("voice"); });
+        $("headVideoBtn").addEventListener("click", function () { startCall("video"); });
+        $("callLinkBtn").addEventListener("click", function () { toast("Call links aren't used in this space — tap a call below to ring Muse."); });
+
+        /* Escape closes the floating layers. */
+        document.addEventListener("keydown", function (e) {
+          if (e.key !== "Escape") return;
+          closeMenu();
+          closeMsgMenu();
+          if (!$("statusView").hidden) closeStatus();
+          $("pollModal").classList.remove("on");
+          $("statusEditor").classList.remove("on");
+          $("infoModal").classList.remove("on");
+        });
       })();
     </script>
   </body>
